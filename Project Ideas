@@ -1,0 +1,49 @@
+E155: Lecture 13
+
+/* -------------------------
+   Projects
+   -------------------------*/
+
+2 PERSON TEAMS
+
+ Project Propsal: 2 page proposal -- DUE WED NOV 5
+
+ Status Report: 4 pages -- DUE MON NOV 24
+
+ Project Presentation/Design Review: 10-15 min -- STARTS MON NOV 24
+     
+
+ Project Demonstration: 30 min session -- DUE WED DEC 10
+     Don't be late it can cost a letter grade (or 2)
+
+ Final Report:
+     Can not be longer than 12 pages (appendices are not counted towards the 12 pages) 
+         Appendices include source code - can point to github link or turn in online
+     If we develop techniques to do things, we can submit those too
+
+
+ USE GIT. OR GITHUB... ETC. IT WILL BE HELPFUL :D 
+     It can help with merging and updating information when we all work on it separately
+     Free hosting and documentation for GitHub
+
+
+ Potential Partners: 
+     Sebastian: Digital Synthesizer
+         Using FPGA to determine frequency
+         Synth and PIC to determine duration
+         Button presses for the different kind of waves
+         FPGA -> PORT -> DAC -> PIC   > so that we can use values between 0 and 1
+         DAC or resistor ladder
+         3D print push buttons as a keyboard
+         Potentiometer - pressure signal.... analog... digital... coverters... 
+         ADC on the PIC -> see if it is usable
+         Problems that we could encounter: 
+             Debouncing (if we use just metal contact)
+             I/O pins (how to bundle things together efficiently)
+             8-16 pins between FPGA and PIC for frequency
+             2 pins for determining which wave
+             4-8 pins for the DAC -> speaker
+             8-16 pins for actual synth input
+
+
+
