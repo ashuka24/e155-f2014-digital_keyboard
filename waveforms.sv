@@ -75,7 +75,7 @@ module spi_slave_receive_only(  input   logic       sck, //from master
 endmodule
 
 module process_spi( input logic         sck, clk,
-                    input logic  [7:0]  q,
+                    input logic  [31:0]  q,
                     output logic [31:0] prd1, prd2, prd3, 
                     output logic [1:0]  waveform, notes);
     logic [6:0] cnt = '0;
