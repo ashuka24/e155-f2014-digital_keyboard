@@ -75,7 +75,7 @@ module spi_slave_receive_only(  input   logic       sck, //from master
 endmodule
 
 module process_spi( input logic         sck, clk,
-                    input logic  [31:0]  q,
+                    input logic  [7:0]  q,
                     output logic [31:0] prd1, prd2, prd3, 
                     output logic [1:0]  waveform, notes);
     logic [6:0] cnt = '0;
@@ -171,7 +171,8 @@ module triangle(input logic clk,
             wave <= wave + 1'b1;
             
             //once we hit max value, start down slope
-            if (wave == 4'b1111)
+            //1110 b/c nonblocking statement
+            if (wave == 4'b1110)
                 firsthalf <= 1'b0;
             end
         //second half is the reverse of above
@@ -181,7 +182,8 @@ module triangle(input logic clk,
             wave <= wave - 1'b1;
             
             // once we go back down to zero, start climbing again
-            if (wave == 4'b0000)
+            //0001 because nonblocking statement
+            if (wave == 4'b0001)
                 firsthalf <= 1'b1;
             end
 endmodule
@@ -198,7 +200,10 @@ module sine(input logic clk,
         if (cnt < (period>>5))
             cnt <= cnt + 1'b1;
         else
+            begin
             prd64 <= prd64 + 1'b1;
+            cnt <= '0;
+            end
     
 
     //cases generated in matlab using rounding
