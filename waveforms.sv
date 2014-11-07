@@ -2,7 +2,7 @@ module digital_keyboard(input logic sck, sdi, clk,
             output logic [5:0] wave);
             
     //period of each note sent from pic over spi
-    logic [32:0] prd1, prd2, prd3, q;
+    logic [31:0] prd1, prd2, prd3, q;
     logic [3:0] wavesq1, wavesq2, wavesq3, 
                 wavesaw1, wavesaw2, wavesaw3,
                 wavetri1, wavetri2, wavetri3,
