@@ -1,14 +1,13 @@
-module main(input logic sck, sdi, clk,
-            input logic [1:0] waveform,
+module digital_keyboard(input logic sck, sdi, clk,
             output logic [5:0] wave);
             
     //period of each note sent from pic over spi
-    logic [32:0] prd1, prd2, prd3;
+    logic [32:0] prd1, prd2, prd3, q;
     logic [3:0] wavesq1, wavesq2, wavesq3, 
                 wavesaw1, wavesaw2, wavesaw3,
                 wavetri1, wavetri2, wavetri3,
                 wavesin1, wavesin2, wavesin3;
-   logic[1:0] waveform, notes;
+    logic[1:0] waveform, notes;
     
     //store sent value in q
     spi_slave_receive_only spi(sck, sdi, q);
@@ -47,20 +46,21 @@ module generateOutput(input logic [3:0] wavesq1, wavesq2, wavesq3,
                       input logic [1:0] waveform, notes,
                       output logic [5:0] wave);
     always_comb
-        case({waveform,notes}):
-            0b0001 : wave = wavesq1<<1 + wavesq1;
-            0b0101 : wave = wavesaw1<<1 + wavesaw1;
-            0b1001 : wave = wavetri1<<1 + wavetri1;
-            0b1101 : wave = wavesin1<<1 + wavesin1;
-            0b0010 : wave = (wavesq1 + wavesq2)>>1 + (wavesq1 + wavesq2);
-            0b0110 : wave = (wavesaw1 + wavesaw2)>>1 + (wavesaw1 + wavesaw2);
-            0b1010 : wave = (wavetri1 + wavetri2)>>1 + (wavetri1 + wavetri2);
-            0b1110 : wave = (wavesin1 + wavesin2)>>1 + (wavesin1 + wavesin2);
-            0b0111 : wave = wavesq1 + wavesq2 + wavesq3;
-            0b0111 : wave = wavesaw1 + wavesaw2 + wavesaw3;
-            0b0111 : wave = wavetri1 + wavetri2 + wavetri3;
-            0b0111 : wave = wavesin1 + wavesin2 + wavesin3;
+        case({waveform, notes})
+            4'b0001 : wave = wavesq1<<1 + wavesq1;
+            4'b0101 : wave = wavesaw1<<1 + wavesaw1;
+            4'b1001 : wave = wavetri1<<1 + wavetri1;
+            4'b1101 : wave = wavesin1<<1 + wavesin1;
+            4'b0010 : wave = (wavesq1 + wavesq2)>>1 + (wavesq1 + wavesq2);
+            4'b0110 : wave = (wavesaw1 + wavesaw2)>>1 + (wavesaw1 + wavesaw2);
+            4'b1010 : wave = (wavetri1 + wavetri2)>>1 + (wavetri1 + wavetri2);
+            4'b1110 : wave = (wavesin1 + wavesin2)>>1 + (wavesin1 + wavesin2);
+            4'b0111 : wave = wavesq1 + wavesq2 + wavesq3;
+            4'b0111 : wave = wavesaw1 + wavesaw2 + wavesaw3;
+            4'b0111 : wave = wavetri1 + wavetri2 + wavetri3;
+            4'b0111 : wave = wavesin1 + wavesin2 + wavesin3;
             default : wave = 6'b0000;
+			endcase
             
     
 endmodule
@@ -69,7 +69,7 @@ endmodule
 // Slave reduces to a simple shift register given by following HDL: 
 module spi_slave_receive_only(  input   logic       sck, //from master
                                 input   logic       sdi, //from master 
-                                output  logic [7:0]  q); // data received
+                                output  logic [31:0]  q); // data received
 	always_ff @(posedge sck)
 		q <={q[30:0], sdi}; //shift register
 endmodule
@@ -77,7 +77,7 @@ endmodule
 module process_spi( input logic         sck, clk,
                     input logic  [7:0]  q,
                     output logic [31:0] prd1, prd2, prd3, 
-                    output logic [1:0]  wavefrom, notes);
+                    output logic [1:0]  waveform, notes);
     logic [6:0] cnt = '0;
     logic moved = 1'b0; //makes sure iterator doesn't start until initial signal
 	 
@@ -121,7 +121,7 @@ module square(input logic clk,
         if(cnt < period>>1)
             begin
             cnt <= cnt + 1'b1;
-            wave <= 4'0000;
+            wave <= 4'b0000;
             end
         //second half of period == 1
         else if (cnt < period)
@@ -143,7 +143,7 @@ module sawtooth(input logic clk,
         //1/16 of period updates count
         if(cnt < period>>4)
             begin
-                cnt <= cnt + 1'b1
+                cnt <= cnt + 1'b1;
             end
         else
             begin
@@ -162,7 +162,7 @@ module triangle(input logic clk,
         //period is in half because we want to alternate between going up and down
         if(cnt < period>>5)
             begin
-                cnt <= cnt + 1'b1
+                cnt <= cnt + 1'b1;
             end
         //first half is same as sawtooth with half the period
         else if (firsthalf)
@@ -195,7 +195,7 @@ module sine(input logic clk,
     logic [5:0] prd64 = '0;
     
     always_ff @(posedge clk)
-        if cnt < (period >> 5)
+        if (cnt < (period>>5))
             cnt <= cnt + 1'b1;
         else
             prd64 <= prd64 + 1'b1;
@@ -268,6 +268,7 @@ module sine(input logic clk,
         4'd61 : wave = 4'b0101;    // exact:0.35486       approx:0.375
         4'd62 : wave = 4'b0110;    // exact:0.40245       approx:0.375
         4'd63 : wave = 4'b0111;    // exact:0.45099       approx:0.4375
-        default
+        default : wave = 4'b0000;
+	endcase
 
 endmodule
