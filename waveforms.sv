@@ -8,6 +8,12 @@ module main(input logic sck, sdi, clk,
                 wavesaw1, wavesaw2, wavesaw3,
                 wavetri1, wavetri2, wavetri3,
                 wavesin1, wavesin2, wavesin3;
+   logic[1:0] waveform, notes;
+    
+    //store sent value in q
+    spi_slave_receive_only spi(sck, sdi, q);
+    
+    process_spi proc(sck, clk, q, prd1, prd2, prd3, waveform, notes);
     
     square sqr1(clk, prd1, wavesq1);
     square sqr2(clk, prd2, wavesq2);
@@ -25,7 +31,84 @@ module main(input logic sck, sdi, clk,
     sine sin2(clk, prd2, wavesin2);
     sine sin3(clk, prd3, wavesin3);
     
+    generateOutput genOut(  wavesq1, wavesq2, wavesq3, 
+                            wavesaw1, wavesaw2, wavesaw3,
+                            wavetri1, wavetri2, wavetri3,
+                            wavesin1, wavesin2, wavesin3,
+                            waveform, notes, wave);
     
+    
+endmodule
+
+module generateOutput(input logic [3:0] wavesq1, wavesq2, wavesq3, 
+                                        wavesaw1, wavesaw2, wavesaw3,
+                                        wavetri1, wavetri2, wavetri3,
+                                        wavesin1, wavesin2, wavesin3,
+                      input logic [1:0] waveform, notes,
+                      output logic [5:0] wave);
+    always_comb
+        case({waveform,notes}):
+            0b0001 : wave = wavesq1<<1 + wavesq1;
+            0b0101 : wave = wavesaw1<<1 + wavesaw1;
+            0b1001 : wave = wavetri1<<1 + wavetri1;
+            0b1101 : wave = wavesin1<<1 + wavesin1;
+            0b0010 : wave = (wavesq1 + wavesq2)>>1 + (wavesq1 + wavesq2);
+            0b0110 : wave = (wavesaw1 + wavesaw2)>>1 + (wavesaw1 + wavesaw2);
+            0b1010 : wave = (wavetri1 + wavetri2)>>1 + (wavetri1 + wavetri2);
+            0b1110 : wave = (wavesin1 + wavesin2)>>1 + (wavesin1 + wavesin2);
+            0b0111 : wave = wavesq1 + wavesq2 + wavesq3;
+            0b0111 : wave = wavesaw1 + wavesaw2 + wavesaw3;
+            0b0111 : wave = wavetri1 + wavetri2 + wavetri3;
+            0b0111 : wave = wavesin1 + wavesin2 + wavesin3;
+            default : wave = 6'b0000;
+            
+    
+endmodule
+
+// If the slave only need to received data from the master
+// Slave reduces to a simple shift register given by following HDL: 
+module spi_slave_receive_only(  input   logic       sck, //from master
+                                input   logic       sdi, //from master 
+                                output  logic [7:0]  q); // data received
+	always_ff @(posedge sck)
+		q <={q[30:0], sdi}; //shift register
+endmodule
+
+module process_spi( input logic         sck, clk,
+                    input logic  [7:0]  q,
+                    output logic [31:0] prd1, prd2, prd3, 
+                    output logic [1:0]  wavefrom, notes);
+    logic [6:0] cnt = '0;
+    logic moved = 1'b0; //makes sure iterator doesn't start until initial signal
+	 
+	 always_ff @(negedge sck)
+            //don't really need cnt++ since it'll overflow
+			 if(cnt == 7'd31) //first 32 bits are prd1
+					begin
+					prd1 <= q;
+					cnt <= cnt + 1'b1;
+					end
+			 else if (cnt == 7'd63) //second 32 bits are prd1
+					begin
+					prd2 <= q;
+					cnt <= cnt + 1'b1;
+					end
+			 else if (cnt == 7'd95) //third 32 bits are prd1
+					begin
+					prd3 <= q;
+					cnt <= cnt + 1;
+					end
+			 else if (cnt == 7'd127) //last 32 bits hold waveform
+					begin
+					waveform <= q[1:0];
+                    notes <= q[3:2];
+					cnt <= 7'd000_0000; //reset cnt
+					end
+			 else if (moved == 1'b1)
+               cnt <= cnt + 1'b1; //base case after initialize
+			 else if(q == 32'hFFFF) //first initial signal
+					moved <= 1'b1; //allow counting
+                    
 endmodule
 
 module square(input logic clk,
