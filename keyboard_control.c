@@ -12,7 +12,7 @@
 *****************************************************************************/
 void initspi(void);
 int spi_send_receive(int);
-void frequency_determiner(int);
+void period_determiner(int);
 void octave_reader(int);
 
 
@@ -20,8 +20,14 @@ void octave_reader(int);
  Macros and Global Variables
 *****************************************************************************/
 int waveform;
-int frequency = 0;
+int period = 0;
 int octave = 4; // default on middle C
+int note1;
+int note2;
+int note3;
+int period1;
+int period2;
+int period3;
 
 /*****************************************************************************
  Main
@@ -34,9 +40,13 @@ void main(void) {
 	while(1){
 
 		//TODO: FINISH WHILE LOOP
-		
-		data = note1 | note2 | note3 | (frequency << 2) | waveform; // send all the info over
-		spi_send_receive(data);
+
+		period_waveform = (period << 2) | waveform;
+		// send the data over piece by piece
+		spi_send_receive(period1);
+		spi_send_receive(period2);
+		spi_send_receive(period3);
+		spi_send_receive(period_waveform);
 	}
 	 
 }
@@ -63,19 +73,23 @@ int spi_send_receive(int send) {
 	return SPI2BUF; // return received data and clear the read buffer full
 }
 
-void frequency_determiner(int note){
-	// determine the frequency of the note played
+
+void period_determiner(int note){
+	// determine the period of the note played
 
 	// TODO: CREATE CASE STATEMENT FOR THE DIFFERENT NOTES
+	
 }
 
-void octave_reader(int new_octave) {
+void octave_reader(int octave) {
 	// read the octave and adjusts the frequencies so that they are in the correct octave
-	if (new_octave > octave){ // shift frequency up to the higher octave
-		frequency = frequency*(2*(octave-octave)); 
+	// frequency gets larger as octave increases. 
+	// A0 = 27.5Hz, A4 = 440Hz, A8 = 7040Hz
+
+	if (new_octave > 4){ // shift period up to the higher octave
+		period = period*(2*(new_octave - 4)); 
 	}
-	else if (new_octave < octave){ // shift frequency down to the lower octave
-		frequency = frequency/(2*(octave - octave)); 
+	else if (new_octave < 4){ // shift period down to the lower octave
+		period = period/(2*(octave - 4)); 
 	}
-	octave = new_octave;
 }
