@@ -139,7 +139,7 @@ sine = [128, 130, 131, 133, 134, 136, 137, 139, 141, 142, 144, 145, 147, 148, 15
  Period and Octave
 ******************************************************************************/
 
-unsigned int period_determiner(int note){
+unsigned int period_determiner(unsigned int note){
 	// determine the period of the note played
 
 	// one hot envoded note signal
