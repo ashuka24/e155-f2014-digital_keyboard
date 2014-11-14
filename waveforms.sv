@@ -1,5 +1,5 @@
-module digital_keyboard(input logic sck, sdi, clk,
-            output logic [5:0] wave);
+module digital_keyboard(input logic        sck, sdi, clk,
+                        output logic [5:0] wave);
             
     //period of each note sent from pic over spi
     logic [31:0] prd1, prd2, prd3, q;
@@ -30,20 +30,20 @@ module digital_keyboard(input logic sck, sdi, clk,
     sine sin2(clk, prd2, wavesin2);
     sine sin3(clk, prd3, wavesin3);
     
-    generateOutput genOut(  wavesq1, wavesq2, wavesq3, 
-                            wavesaw1, wavesaw2, wavesaw3,
-                            wavetri1, wavetri2, wavetri3,
-                            wavesin1, wavesin2, wavesin3,
-                            waveform, notes, wave);
+    generateOutput genOut(wavesq1, wavesq2, wavesq3, 
+                          wavesaw1, wavesaw2, wavesaw3,
+                          wavetri1, wavetri2, wavetri3,
+                          wavesin1, wavesin2, wavesin3,
+                          waveform, notes, wave);
     
     
 endmodule
 
-module generateOutput(input logic [3:0] wavesq1, wavesq2, wavesq3, 
-                                        wavesaw1, wavesaw2, wavesaw3,
-                                        wavetri1, wavetri2, wavetri3,
-                                        wavesin1, wavesin2, wavesin3,
-                      input logic [1:0] waveform, notes,
+module generateOutput(input logic  [3:0] wavesq1, wavesq2, wavesq3, 
+                                         wavesaw1, wavesaw2, wavesaw3,
+                                         wavetri1, wavetri2, wavetri3,
+                                         wavesin1, wavesin2, wavesin3,
+                      input logic  [1:0] waveform, notes,
                       output logic [5:0] wave);
     always_comb
         case({waveform, notes})
@@ -67,47 +67,47 @@ endmodule
 
 // If the slave only need to received data from the master
 // Slave reduces to a simple shift register given by following HDL: 
-module spi_slave_receive_only(  input   logic       sck, //from master
-                                input   logic       sdi, //from master 
-                                output  logic [31:0]  q); // data received
+module spi_slave_receive_only(input logic          sck, //from master
+                              input logic          sdi, //from master 
+                              output logic [31:0]  q); // data received
 	always_ff @(posedge sck)
 		q <={q[30:0], sdi}; //shift register
 endmodule
 
-module process_spi( input logic         sck, clk,
-                    input logic  [31:0]  q,
-                    output logic [31:0] prd1, prd2, prd3, 
-                    output logic [1:0]  waveform, notes);
+module process_spi(input logic         sck, clk,
+                   input logic  [31:0] q,
+                   output logic [31:0] prd1, prd2, prd3, 
+                   output logic [1:0]  waveform, notes);
     logic [6:0] cnt = '0;
     logic moved = 1'b0; //makes sure iterator doesn't start until initial signal
 	 
 	 always_ff @(negedge sck)
-            //don't really need cnt++ since it'll overflow
-			 if(cnt == 7'd31) //first 32 bits are prd1
-					begin
-					prd1 <= q;
-					cnt <= cnt + 1'b1;
-					end
-			 else if (cnt == 7'd63) //second 32 bits are prd1
-					begin
-					prd2 <= q;
-					cnt <= cnt + 1'b1;
-					end
-			 else if (cnt == 7'd95) //third 32 bits are prd1
-					begin
-					prd3 <= q;
-					cnt <= cnt + 1;
-					end
-			 else if (cnt == 7'd127) //last 32 bits hold waveform
-					begin
-					waveform <= q[1:0];
-                    notes <= q[3:2];
-					cnt <= 7'd000_0000; //reset cnt
-					end
-			 else if (moved == 1'b1)
-               cnt <= cnt + 1'b1; //base case after initialize
-			 else if(q == 32'hFFFF) //first initial signal
-					moved <= 1'b1; //allow counting
+        //don't really need cnt++ since it'll overflow
+		if(cnt == 7'd31) //first 32 bits are prd1
+			begin
+			prd1 <= q;
+			cnt <= cnt + 1'b1;
+			end
+		else if (cnt == 7'd63) //second 32 bits are prd1
+			begin
+			prd2 <= q;
+			cnt <= cnt + 1'b1;
+			end
+		else if (cnt == 7'd95) //third 32 bits are prd1
+			begin
+			prd3 <= q;
+			cnt <= cnt + 1;
+			end
+		else if (cnt == 7'd127) //last 32 bits hold waveform
+			begin
+			waveform <= q[1:0];
+            notes <= q[3:2];
+			cnt <= 7'd000_0000; //reset cnt
+			end
+		else if (moved == 1'b1)
+            cnt <= cnt + 1'b1; //base case after initialize
+		else if(q == 32'hFFFF) //first initial signal
+			moved <= 1'b1; //allow counting
                     
 endmodule
 
@@ -135,8 +135,8 @@ module square(input logic clk,
 endmodule
 
 module sawtooth(input logic clk,
-              input logic [32:0] period,
-              output logic [3:0] wave);
+                input logic [32:0] period,
+                output logic [3:0] wave);
     logic [15:0] cnt = '0;
             
     always_ff @(posedge clk)
@@ -153,8 +153,8 @@ module sawtooth(input logic clk,
 endmodule
 
 module triangle(input logic clk,
-              input logic [32:0] period,
-              output logic [3:0] wave);
+                input logic [32:0] period,
+                output logic [3:0] wave);
     logic [32:0] cnt = '0;
     logic firsthalf = 1'b1;
     
@@ -189,8 +189,8 @@ module triangle(input logic clk,
 endmodule
 
 module sine(input logic clk,
-              input logic [32:0] period,
-              output logic [3:0] wave);
+            input logic [32:0] period,
+            output logic [3:0] wave);
     logic [32:0] cnt = '0;
     //this will act as a clock of with a period of 1/32 period
     //this will be used to create a sine wave from 32 samples
@@ -225,7 +225,7 @@ module sine(input logic clk,
         6'd13 : wave = 4'b1111;    // exact:0.97847       approx:1
         6'd14 : wave = 4'b1111;    // exact:0.99039       approx:1
         6'd15 : wave = 4'b1111;    // exact:0.99759       approx:1
-        6'd16 : wave = 4'b10000;    // exact:1            approx:1
+        6'd16 : wave = 4'b1000;    // exact:1            approx:1
         6'd17 : wave = 4'b1111;    // exact:0.99759       approx:1
         6'd18 : wave = 4'b1111;    // exact:0.99039       approx:1
         6'd19 : wave = 4'b1111;    // exact:0.97847       approx:1
