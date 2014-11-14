@@ -12,9 +12,15 @@
 *****************************************************************************/
 void initspi(void);
 int spi_send_receive(int);
+
+void initTimers(void);
+void square(void);
+void sawtooth(void);
+void triangle(void);
+void sine(void);
+
 void period_determiner(int);
 void octave_reader(int);
-
 
 /*****************************************************************************
  Macros and Global Variables
@@ -73,12 +79,56 @@ int spi_send_receive(int send) {
 	return SPI2BUF; // return received data and clear the read buffer full
 }
 
+/******************************************************************************
+ Wave Generation
+******************************************************************************/
+void initTimers(void){
+	// Assumes peripheral clock at 10MHz
+	//        Use Timer1 for note duration
+	// T1CON
+	// bit 15:	ON=1: enable timer
+	// bit 14:	FRZ=0: keep running in exception mode
+	// bit 13:	SIDL = 0: keep running in idle mode
+	// bit 12:	TWDIS=1: ignore writes until current write completes
+	// bit 11: 	TWIP=0: don't care in synchronous mode
+	// bit 10-8: unused
+	// bit 7: 	TGATE=0: disable gated accumulation
+	// bit 6:   unused
+	// bit 5-4: TCKPS=11: 1:256 prescaler, 0.1us*256=25.6us
+	// bit 3:	unused
+	// bit 2:	don't care in internal clock mode
+	// bit 1:	TCS=0: use internal peripheral clock
+	// bit 0:	unused
+	T1CON = 0b1001000000110000;
+}
+
+void square(void){
+
+}
+
+void sawtooth(void){
+
+}
+
+void triangle(void){
+
+}
+
+void sine(void){
+
+}
+
+/******************************************************************************
+ Period and Octave
+******************************************************************************/
 
 void period_determiner(int note){
 	// determine the period of the note played
 
 	// TODO: CREATE CASE STATEMENT FOR THE DIFFERENT NOTES
-	
+	switch (note)
+		case 0x0000 
+		case 0x0009; period = 1/440 //440Hz
 }
 
 void octave_reader(int octave) {
@@ -92,4 +142,5 @@ void octave_reader(int octave) {
 	else if (new_octave < 4){ // shift period down to the lower octave
 		period = period/(2*(octave - 4)); 
 	}
+	octave = new_octave;
 }
