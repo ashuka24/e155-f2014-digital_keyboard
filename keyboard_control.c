@@ -139,7 +139,7 @@ sine = [128, 130, 131, 133, 134, 136, 137, 139, 141, 142, 144, 145, 147, 148, 15
  Period and Octave
 ******************************************************************************/
 
-void period_determiner(int note){
+unsigned int period_determiner(int note){
 	// determine the period of the note played
 
 	// one hot envoded note signal
@@ -157,10 +157,12 @@ void period_determiner(int note){
 		case 0x0200; period = secondtonano/440;   //a
 		case 0x0400; period = secondtonano/466.2; //a sharp
 		case 0x0800; period = secondtonano/493.9; //b
+
+	return period;
 		
 }
 
-void octave_adjust() {
+unsigned int octave_adjust(unsigned int period) {
 	// read the octave and adjusts the frequencies so that they are in the correct octave
 	// frequency gets larger as octave increases. 
 	// A0 = 27.5Hz, A4 = 440Hz, A8 = 7040Hz
@@ -171,9 +173,10 @@ void octave_adjust() {
 	else if (new_octave < 4){ // shift period down to the lower octave
 		period = period/(2*(octave)); 
 	}
+	return period;
 }
 
-void octave_read(int button){
+void octave_read(unsigned int button){
 	if(button = 0b10)
 		octave++;
 	else if(button = 0b01)
