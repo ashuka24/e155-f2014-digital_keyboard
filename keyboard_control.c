@@ -14,10 +14,10 @@ void initspi(void);
 int spi_send_receive(int);
 
 void initTimers(void);
-void square(void);
-void sawtooth(void);
-void triangle(void);
-void sine(void);
+unsigned char initSquare(void);
+unsigned char initSawtooth(void);
+unsigned char initTriangle(void);
+unsigned char initSine(void);
 
 void period_determiner(int);
 void octave_reader(int);
@@ -25,7 +25,7 @@ void octave_reader(int);
 /*****************************************************************************
  Macros and Global Variables
 *****************************************************************************/
-int waveform;
+int wave;
 int period = 0;
 int octave = 4; // default on middle C
 int note1;
@@ -34,6 +34,10 @@ int note3;
 int period1;
 int period2;
 int period3;
+unsigned char square[512];
+unsigned char sawtooth[512];
+unsigned char triangle[512];
+unsigned char sine[512];
 
 /*****************************************************************************
  Main
@@ -46,17 +50,16 @@ void main(void) {
 	
 	initspi(); 				// initialize the SPI port
 	initTimers();
+	initSquare();			// initialize the waves
+	initSawtooth();
+	initTriangle();
+	initSine();
 
 	while(1){
 
 		//TODO: FINISH WHILE LOOP
 
-		period_waveform = (period << 2) | waveform;
-		// send the data over piece by piece
-		spi_send_receive(period1);
-		spi_send_receive(period2);
-		spi_send_receive(period3);
-		spi_send_receive(period_waveform);
+		spi_send_receive(wave);
 	}
 	 
 }
@@ -106,19 +109,28 @@ void initTimers(void){
 	T1CON = 0b1001000000110000;
 }
 
-void square(void){
+unsigned char initSquare(void){
+	for(int i = 0; i < 256; i++){
+		square[i]=255;
+		square[512-i] = 0;
+	}
+}
+
+unsigned char initSawtooth(void){
+	for(int i = 0;i < 512; i++){
+		sawtooth[i] = i/2;
+	}
+}
+
+unsigned char initTriangle(void){
+	for(int i = 0; i < 256; i++){
+		square[i]=i;
+		square[512-i] = i;
+	}
 
 }
 
-void sawtooth(void){
-
-}
-
-void triangle(void){
-
-}
-
-void sine(void){
+unsigned char initSine(void){
 
 }
 
