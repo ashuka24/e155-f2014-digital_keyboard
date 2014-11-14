@@ -39,9 +39,13 @@ int period3;
  Main
 *****************************************************************************/
 void main(void) { 
+
+	TRISB = 0xFFFF// input from keys
+
 	int received;
 	
 	initspi(); 				// initialize the SPI port
+	initTimers();
 
 	while(1){
 
