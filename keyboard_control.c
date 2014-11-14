@@ -127,11 +127,10 @@ unsigned char initTriangle(void){
 		square[i]=i;
 		square[512-i] = i;
 	}
-
 }
 
 unsigned char initSine(void){
-
+	
 }
 
 /******************************************************************************
