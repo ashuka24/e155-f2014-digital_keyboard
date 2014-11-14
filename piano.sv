@@ -12,7 +12,7 @@ module digital_keyboard(input  logic       sck, sdi, clk,
 	logic sdi,
     
 	spi_slave_receive_only spi(sck, sdi, q);
-	process_spi proc(sck, clk, q, );
+	attenuation sound(clk, q, wave);
     
 
 endmodule
