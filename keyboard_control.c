@@ -130,7 +130,7 @@ unsigned char initTriangle(void){
 }
 
 unsigned char initSine(void){
-	
+
 }
 
 /******************************************************************************
