@@ -20,20 +20,22 @@ unsigned char initTriangle(void);
 unsigned char initSine(void);
 
 void period_determiner(int);
-void octave_reader(int);
+void octave_adjust();
+void octave_read();
 
 /*****************************************************************************
  Macros and Global Variables
 *****************************************************************************/
 int wave;
-int period = 0;
-int octave = 4; // default on middle C
-int note1;
-int note2;
-int note3;
-int period1;
-int period2;
-int period3;
+unsigned int period = 0;
+unsigned char octave = 4; // default on middle C
+unsigned int note1;
+unsigned int note2;
+unsigned int note3;
+unsigned int period1;
+unsigned int period2;
+unsigned int period3;
+unsigned int secondtonano = 10^9; //convert seconds to picoseconds
 unsigned char square[512];
 unsigned char sawtooth[512];
 unsigned char triangle[512];
@@ -140,22 +142,41 @@ sine = [128, 130, 131, 133, 134, 136, 137, 139, 141, 142, 144, 145, 147, 148, 15
 void period_determiner(int note){
 	// determine the period of the note played
 
-	// TODO: CREATE CASE STATEMENT FOR THE DIFFERENT NOTES
+	// one hot envoded note signal
 	switch (note)
-		case 0x0000 
-		case 0x0009; period = 1/440 //440Hz
+		case 0x0000; period = 0;
+		case 0x0001; period = secondtonano/256.6; //middle c
+		case 0x0002; period = secondtonano/277.2; //c sharp
+		case 0x0004; period = secondtonano/293.7; //d
+		case 0x0008; period = secondtonano/311.1; //d sharp
+		case 0x0010; period = secondtonano/329.6; //e
+		case 0x0020; period = secondtonano/349.2; //f
+		case 0x0040; period = secondtonano/370.0; //f sharp
+		case 0x0080; period = secondtonano/392.0; //g
+		case 0x0100; period = secondtonano/415.3; //g sharp
+		case 0x0200; period = secondtonano/440;   //a
+		case 0x0400; period = secondtonano/466.2; //a sharp
+		case 0x0800; period = secondtonano/493.9; //b
+		
 }
 
-void octave_reader(int octave) {
+void octave_adjust() {
 	// read the octave and adjusts the frequencies so that they are in the correct octave
 	// frequency gets larger as octave increases. 
 	// A0 = 27.5Hz, A4 = 440Hz, A8 = 7040Hz
 
-	if (new_octave > 4){ // shift period up to the higher octave
-		period = period*(2*(new_octave - 4)); 
+	if (octave > 4){ // shift period up to the higher octave
+		period = period*(2*(octave - 4)); 
 	}
 	else if (new_octave < 4){ // shift period down to the lower octave
-		period = period/(2*(octave - 4)); 
+		period = period/(2*(octave)); 
 	}
-	octave = new_octave;
+}
+
+void octave_read(int button){
+	if(button = 0b10)
+		octave++;
+	else if(button = 0b01)
+		octave--;
+}
 }
