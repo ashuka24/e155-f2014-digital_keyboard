@@ -19,9 +19,10 @@ unsigned char initSawtooth(void);
 unsigned char initTriangle(void);
 unsigned char initSine(void);
 
-void period_determiner(int);
-void octave_adjust();
+void getPeriods(unsigned int);
+unsigned int octave_adjust();
 void octave_read();
+void getWave(unsigned int);
 
 /*****************************************************************************
  Macros and Global Variables
@@ -29,25 +30,37 @@ void octave_read();
 int wave;
 unsigned int period = 0;
 unsigned char octave = 4; // default on middle C
-unsigned int note1;
-unsigned int note2;
-unsigned int note3;
+unsigned int notearray[12];
 unsigned int period1;
 unsigned int period2;
 unsigned int period3;
+unsigned int periods[3];
+unsigned int periodarray[12] =  {secondtonano/256.6, 
+                                secondtonano/277.2,
+                                secondtonano/293.7,
+                                secondtonano/311.1,
+                                secondtonano/329.6,
+                                secondtonano/349.2,
+                                secondtonano/370.0,
+                                secondtonano/392.0,
+                                secondtonano/415.3,
+                                secondtonano/440,
+                                secondtonano/466.2,
+                                secondtonano/493.9};
 unsigned int secondtonano = 10^9; //convert seconds to picoseconds
-unsigned char square[512];
-unsigned char sawtooth[512];
-unsigned char triangle[512];
-unsigned char sine[512];
+unsigned char square[512], 
+            sawtooth[512], 
+            triangle[512], 
+                sine[512], 
+            currWave[512];
 
 /*****************************************************************************
  Main
 *****************************************************************************/
 void main(void) { 
 
-	TRISB = 0xFFFF// input from keys
-
+	TRISB = 0xFFFF; // input from keys
+    TRISD = 0xFFFF; // 11-8 are wave selectors
 	int received;
 	
 	initspi(); 				// initialize the SPI port
@@ -56,12 +69,47 @@ void main(void) {
 	initSawtooth();
 	initTriangle();
 	initSine();
-
+    TMR2 = 0;
+    TMR3 = 0;
+    TMR4 = 0;
+    unsigned short count1 = 0, count2 = 0, count3 = 0;
+    unsigned short notes = 0;
+    unsigned char send1, send2, send3;
+    unsigned int sendtot;
 	while(1){
+        octave_read();
+        notes = PORTB>>4;
+        getPeriods(notes);
+        getWave((PORTD>>8)%16);
+        
+        
+        if(periods[0] == 0) {
+            send1 = 0;
+        } else if(TMR2*4 >= periods[0]/512) {
+            send1 = currwave[++count1];
+        } else {
+            send1 = currwave[count1];
+        }
+        
+        if(periods[1] == 0) {
+            send2 = 0;
+        } else if(TMR3*4 >= periods[1]/512) {
+            send2 = currwave[++count1];
+        } else {
+            send2 = currwave[count1];
+        }
+        
+        if(periods[2] == 0) {
+            send3 = 0;
+        } else if(TMR4*4 >= periods[2]/512) {
+            send3 = currwave[++count1];
+        } else {
+            send3 = currwave[count1];
+        }
 
-		//TODO: FINISH WHILE LOOP
+        sendtot = send1 + send2<<8 + send3<<16;    
 
-		spi_send_receive(wave);
+		spi_send_receive(sendtot);
 	}
 	 
 }
@@ -92,23 +140,21 @@ int spi_send_receive(int send) {
  Wave Generation
 ******************************************************************************/
 void initTimers(void){
-	// Assumes peripheral clock at 10MHz
-	//        Use Timer1 for note duration
-	// T1CON
-	// bit 15:	ON=1: enable timer
-	// bit 14:	FRZ=0: keep running in exception mode
-	// bit 13:	SIDL = 0: keep running in idle mode
-	// bit 12:	TWDIS=1: ignore writes until current write completes
-	// bit 11: 	TWIP=0: don't care in synchronous mode
-	// bit 10-8: unused
-	// bit 7: 	TGATE=0: disable gated accumulation
-	// bit 6:   unused
-	// bit 5-4: TCKPS=11: 1:256 prescaler, 0.1us*256=25.6us
-	// bit 3:	unused
-	// bit 2:	don't care in internal clock mode
-	// bit 1:	TCS=0: use internal peripheral clock
-	// bit 0:	unused
-	T1CON = 0b1001000000110000;
+    //	Use Timer2 for frequency generation	
+	//	T2CON
+	//	bit 15: ON=1: enable timer
+	//	bit 14: FRZ=0: keep running in exception mode
+	//	bit 13: SIDL = 0: keep running in idle mode
+	//	bit 12-8: unused
+	//	bit 7: 	TGATE=0: disable gated accumulation
+	//	bit 6-4: TCKPS=010: 1:4 prescaler
+	//	bit	3:	T32=0: 16-bit timer
+	//	bit 2:	unused
+	//	bit 1:	TCS=0: use internal peripheral clock
+	//	bit 0:	unused
+	T2CON = 0b1000000001000000;
+    T3CON = 0b1000000001000000;
+    T4CON = 0b1000000001000000;
 }
 
 unsigned char initSquare(void){
@@ -127,7 +173,7 @@ unsigned char initSawtooth(void){
 unsigned char initTriangle(void){
 	for(int i = 0; i < 256; i++){
 		square[i]=i;
-		square[512-i] = i;
+		square[511-i] = i;
 	}
 }
 
@@ -165,27 +211,15 @@ unsigned char initSine(void){
  Period and Octave
 ******************************************************************************/
 
-unsigned int period_determiner(unsigned int note){
-	// determine the period of the note played
-
-	// one hot envoded note signal
-	switch (note)
-		case 0x0000; period = 0;
-		case 0x0001; period = secondtonano/256.6; //middle c
-		case 0x0002; period = secondtonano/277.2; //c sharp
-		case 0x0004; period = secondtonano/293.7; //d
-		case 0x0008; period = secondtonano/311.1; //d sharp
-		case 0x0010; period = secondtonano/329.6; //e
-		case 0x0020; period = secondtonano/349.2; //f
-		case 0x0040; period = secondtonano/370.0; //f sharp
-		case 0x0080; period = secondtonano/392.0; //g
-		case 0x0100; period = secondtonano/415.3; //g sharp
-		case 0x0200; period = secondtonano/440;   //a
-		case 0x0400; period = secondtonano/466.2; //a sharp
-		case 0x0800; period = secondtonano/493.9; //b
-
-	return period;
-		
+void getPeriods(unsigned int notes) {
+    int count = 0;
+    for(int i = 0; i < 12; i++) {
+        notearray[i] = notes%2;
+        if(notes%2 && (count < 3)) {
+            periods[count++] = octave_adjust(periodarray[i]);
+        }
+        notes = notes>>1;
+    }
 }
 
 unsigned int octave_adjust(unsigned int period) {
@@ -202,10 +236,18 @@ unsigned int octave_adjust(unsigned int period) {
 	return period;
 }
 
-void octave_read(unsigned int button){
-	if(button = 0b10)
+void octave_read(){
+	if(PORTBbits.RB3)
 		octave++;
-	else if(button = 0b01)
+	else if(PORTBbits.RB2)
 		octave--;
 }
+
+void getWave(unsigned int wave) {
+    switch(wave)
+        case 0x0008 : currWave = square; break;
+        case 0x0004 : currWave = sawtooth; break;
+        case 0x0002 : currwave = triangle; break;
+        case 0x0001 : currwave = sine; break;
+        default     : currwave = sine;
 }
