@@ -37,6 +37,7 @@ unsigned char square[512],
             triangle[512], 
                 sine[512], 
             currWave[512];
+unsigned char canupdate = 1;
 
 /*****************************************************************************
  Main
@@ -235,10 +236,16 @@ unsigned int octave_adjust(unsigned int period) {
 }
 
 void octave_read(){
-	if(PORTBbits.RB3)
-		octave++;
-	else if(PORTBbits.RB2)
-		octave--;
+	if(PORTBbits.RB3) {
+		octave += canUpdate;
+		canUpdate = 0;
+	} else if(PORTBbits.RB2) {
+		octave -= canUpdate;;
+		canUpdate = 0;
+	} else if {
+		canUpdate = 1;
+	}
+		
 }
 
 void getWave(unsigned int wave) {
