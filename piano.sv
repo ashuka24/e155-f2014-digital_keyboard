@@ -8,7 +8,7 @@
 module digital_keyboard(input  logic       sck, sdi, clk,
                         output logic [7:0] wave);
 
-	logic [7:0] q;
+	logic [31:0] q;
 	logic sdi,
     
 	spi_slave_receive_only spi(sck, sdi, q);
@@ -21,9 +21,9 @@ endmodule
 // Slave reduces to a simple shift register given by following HDL: 
 module spi_slave_receive_only(input  logic       sck, //from master
                               input  logic       sdi, //from master 
-                              output logic [7:0] q); // data received
+                              output logic [31:0] q); // data received
 	always_ff @(posedge sck)
-		q <={q[7:0], sdi}; //shift register
+		q <={q[30:0], sdi}; //shift register
 endmodule
 
 module attenuation(input  logic       clk,
