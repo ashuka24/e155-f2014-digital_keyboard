@@ -14,10 +14,10 @@ void initspi(void);
 int spi_send_receive(int);
 
 void initTimers(void);
-unsigned char initSquare(void);
-unsigned char initSawtooth(void);
-unsigned char initTriangle(void);
-unsigned char initSine(void);
+void initSquare(void);
+void initSawtooth(void);
+void initTriangle(void);
+void initSine(void);
 
 void getPeriods(unsigned int);
 unsigned int octave_adjust();
@@ -27,27 +27,11 @@ void getWave(unsigned int);
 /*****************************************************************************
  Macros and Global Variables
 *****************************************************************************/
-int wave;
-unsigned int period = 0;
 unsigned char octave = 4; // default on middle C
 unsigned int notearray[12];
-unsigned int period1;
-unsigned int period2;
-unsigned int period3;
 unsigned int periods[3];
-unsigned int periodarray[12] =  {secondtonano/256.6, 
-                                secondtonano/277.2,
-                                secondtonano/293.7,
-                                secondtonano/311.1,
-                                secondtonano/329.6,
-                                secondtonano/349.2,
-                                secondtonano/370.0,
-                                secondtonano/392.0,
-                                secondtonano/415.3,
-                                secondtonano/440,
-                                secondtonano/466.2,
-                                secondtonano/493.9};
 unsigned int secondtonano = 10^9; //convert seconds to picoseconds
+unsigned int periodarray[12];
 unsigned char square[512], 
             sawtooth[512], 
             triangle[512], 
@@ -157,28 +141,28 @@ void initTimers(void){
     T4CON = 0b1000000001000000;
 }
 
-unsigned char initSquare(void){
+void initSquare(void){
 	for(int i = 0; i < 256; i++){
 		square[i]=255;
 		square[512-i] = 0;
 	}
 }
 
-unsigned char initSawtooth(void){
+void initSawtooth(void){
 	for(int i = 0;i < 512; i++){
 		sawtooth[i] = i/2;
 	}
 }
 
-unsigned char initTriangle(void){
+void initTriangle(void){
 	for(int i = 0; i < 256; i++){
 		square[i]=i;
 		square[511-i] = i;
 	}
 }
 
-unsigned char initSine(void){
-	sine = [128, 130, 131, 133, 134, 136, 137, 139, 141, 142, 144, 145, 147, 148, 150, 151, 153, 
+void initSine(void){
+	sine = {128, 130, 131, 133, 134, 136, 137, 139, 141, 142, 144, 145, 147, 148, 150, 151, 153, 
 			155, 156, 158, 159, 161, 162, 164, 165, 167, 168, 170, 171, 173, 174, 176, 177, 178, 
 			180, 181, 183, 184, 186, 187, 188, 190, 191, 192, 194, 195, 196, 198, 199, 200, 202, 
 			203, 204, 206, 207, 208, 209, 210, 212, 213, 214, 215, 216, 217, 219, 220, 221, 222, 
@@ -204,9 +188,23 @@ unsigned char initSine(void){
 		    23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 39, 40, 41, 42, 43, 44, 
 		    46, 47, 48, 49, 50, 52, 53, 54, 56, 57, 58, 60, 61, 62, 64, 65, 66, 68, 69, 70, 72, 
 		    73, 75, 76, 78, 79, 80, 82, 83, 85, 86, 88, 89, 91, 92, 94, 95, 97, 98, 100, 101, 
-		    103, 105, 106, 108, 109, 111, 112, 114, 115, 117, 119, 120, 122, 123, 125, 126];
+		    103, 105, 106, 108, 109, 111, 112, 114, 115, 117, 119, 120, 122, 123, 125, 126};
 }
 
+void initPeriods(){
+    periodarray = {secondtonano/256.6, 
+                                secondtonano/277.2,
+                                secondtonano/293.7,
+                                secondtonano/311.1,
+                                secondtonano/329.6,
+                                secondtonano/349.2,
+                                secondtonano/370.0,
+                                secondtonano/392.0,
+                                secondtonano/415.3,
+                                secondtonano/440,
+                                secondtonano/466.2,
+                                secondtonano/493.9};
+}
 /******************************************************************************
  Period and Octave
 ******************************************************************************/
@@ -244,10 +242,11 @@ void octave_read(){
 }
 
 void getWave(unsigned int wave) {
-    switch(wave)
+    switch(wave) {
         case 0x0008 : currWave = square; break;
         case 0x0004 : currWave = sawtooth; break;
         case 0x0002 : currwave = triangle; break;
         case 0x0001 : currwave = sine; break;
         default     : currwave = sine;
+    }
 }
