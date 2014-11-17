@@ -51,7 +51,7 @@ module add_notes(input logic [7:0] note1, note2, note3,
 		output logic [7:0] notes);
 	logic [9:0] intermed;
 	assign intermed = (note1 + note2 + note3);
-	assign notes = intermed>>2 + intermed>>4 + intermed>>6; //divide by 3.047 = ~3
+	assign notes = intermed>>2 + intermed>>4 + intermed>>6 + intermed>>8; //divide by 3.011 = ~3
 
 endmodule
 
