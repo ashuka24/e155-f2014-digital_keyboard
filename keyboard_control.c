@@ -68,36 +68,47 @@ void main(void) {
 
 	while(1){
         octave_read();
+        // PORTB is note[12], octave[2], rando[2]
         notes = PORTB>>4;
         getPeriods(notes);
-        getWave((PORTD>>8)%16);
+        // PORTD is leds[8], wave[4], rando[4]
+        getWave((PORTD>>8)%16); // modding keeps everything below what you're modding by
         
         
         if(periods[0] == 0) {
-            send1 = 0;
-        } else if(TMR2*4 >= periods[0]/512) {
-            send1 = currWave[++count1];
-        } else {
+            send1 = 0; // no note being played
+        } 
+        else if(TMR2*4 >= periods[0]/512) { // TMR2*4 = 18 bits 
+            send1 = currWave[++count1]; // get the sample of the wave
+            TMR2 = 0; // reset timer
+        } 
+        else {
             send1 = currWave[count1];
         }
         
-        if(periods[1] == 0) {
+        if(periods[1] == 0) { // repeat for second note, if it ecists
             send2 = 0;
-        } else if(TMR3*4 >= periods[1]/512) {
+        } 
+        else if(TMR3*4 >= periods[1]/512) {
             send2 = currWave[++count1];
-        } else {
+            TMR3 = 0;
+        } 
+        else {
             send2 = currWave[count1];
         }
         
-        if(periods[2] == 0) {
+        if(periods[2] == 0) { // repeat for third note, if it exists
             send3 = 0;
-        } else if(TMR4*4 >= periods[2]/512) {
+        } 
+        else if(TMR4*4 >= periods[2]/512) {
             send3 = currWave[++count1];
-        } else {
+            TMR4 = 0; 
+        } 
+        else {
             send3 = currWave[count1];
         }
 
-        sendtot = send1 + send2<<8 + send3<<16;    
+        sendtot = send1 + send2<<8 + send3<<16;  // send all three of the waves
 
 		spi_send_receive(sendtot);
 	}
@@ -200,18 +211,18 @@ void initSine(void){
 }
 
 void initPeriods(){
-    periodarray = (int[]) {secondtonano/261.6,  //C
-		                   secondtonano/277.2,  //C#
-		                   secondtonano/293.7,  //D
-		                   secondtonano/311.1,  //Eb
-		                   secondtonano/329.6,  //E
-		                   secondtonano/349.2,  //F
-		                   secondtonano/370.0,  //F#
-		                   secondtonano/392.0,  //G
-		                   secondtonano/415.3,  //G#
+    periodarray = (int[]) {secondtonano/261.6,  //C4
+		                   secondtonano/277.2,  //C#4
+		                   secondtonano/293.7,  //D4
+		                   secondtonano/311.1,  //Eb4
+		                   secondtonano/329.6,  //E4
+		                   secondtonano/349.2,  //F4
+		                   secondtonano/370.0,  //F#4
+		                   secondtonano/392.0,  //G4
+		                   secondtonano/415.3,  //G#4
 		                   secondtonano/440,    //A4
-		                   secondtonano/466.2,  //Bb
-		                   secondtonano/493.9}; //B
+		                   secondtonano/466.2,  //Bb4
+		                   secondtonano/493.9}; //B4
 }
 
 /******************************************************************************
@@ -222,9 +233,9 @@ void getPeriods(unsigned int notes) {
     int count = 0;
     int i = 0;
     for(; i < 12; i++) {
-        notearray[i] = notes%2;
-        if(notes%2 && (count < 3)) {
-            periods[count++] = octave_adjust(periodarray[i]);
+        notearray[i] = notes%2; // take the last bit
+        if(notes%2 && (count < 3)) { //if the last bit is 1
+            periods[count++] = octave_adjust(periodarray[i]); //get init period, adjust by octave, put in periods
         }
         notes = notes>>1;
     }
