@@ -39,7 +39,7 @@ unsigned char *square,
               *sine,
               *currWave;
 unsigned char canUpdate = 1;
-
+unsigned int countNotes = 0;
 /*****************************************************************************
  Main
 *****************************************************************************/
@@ -74,41 +74,44 @@ void main(void) {
         // PORTD is leds[8], wave[4], rando[4]
         getWave((PORTD>>8)%16); // modding keeps everything below what you're modding by
         
-        
+    
         if(periods[0] == 0) {
             send1 = 0; // no note being played
-        } 
-        else if(TMR2*4 >= periods[0]/512) { // TMR2*4 = 18 bits 
+            countNotes = 0;
+        } else if(TMR2*4 >= periods[0]/512) { // TMR2*4 = 18 bits 
             send1 = currWave[++count1]; // get the sample of the wave
             TMR2 = 0; // reset timer
-        } 
-        else {
+            countNotes = 1;
+        } else {
             send1 = currWave[count1];
+            countNotes = 1;
         }
         
         if(periods[1] == 0) { // repeat for second note, if it ecists
             send2 = 0;
-        } 
-        else if(TMR3*4 >= periods[1]/512) {
+            countNotes = 1; // only has 1 note
+        } else if(TMR3*4 >= periods[1]/512) {
             send2 = currWave[++count1];
             TMR3 = 0;
-        } 
-        else {
+            countNotes = 2; // else has 2 notes
+        } else {
             send2 = currWave[count1];
+            countNotes = 2;
         }
         
         if(periods[2] == 0) { // repeat for third note, if it exists
-            send3 = 0;
-        } 
-        else if(TMR4*4 >= periods[2]/512) {
+            send3 = 0; // only has 2 notes
+        } else if(TMR4*4 >= periods[2]/512) {
             send3 = currWave[++count1];
-            TMR4 = 0; 
-        } 
-        else {
+            TMR4 = 0;
+            countNotes = 3; // else playing all 3 notes
+        } else {
             send3 = currWave[count1];
+            countNotes = 3;
         }
 
-        sendtot = send1 + send2<<8 + send3<<16;  // send all three of the waves
+
+        sendtot = send1 + send2<<8 + send3<<16 + countNotes<<24;  // send all three of the waves
 
 		spi_send_receive(sendtot);
 	}
