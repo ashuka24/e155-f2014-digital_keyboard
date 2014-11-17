@@ -1,0 +1,370 @@
+Analysis & Synthesis report for piano
+Sun Nov 16 21:43:18 2014
+Quartus II 32-bit Version 12.0 Build 178 05/31/2012 SJ Web Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Legal Notice
+  2. Analysis & Synthesis Summary
+  3. Analysis & Synthesis Settings
+  4. Parallel Compilation
+  5. Analysis & Synthesis Source Files Read
+  6. Analysis & Synthesis Resource Usage Summary
+  7. Analysis & Synthesis Resource Utilization by Entity
+  8. Registers Removed During Synthesis
+  9. Removed Registers Triggering Further Register Optimizations
+ 10. General Register Statistics
+ 11. Multiplexer Restructuring Statistics (Restructuring Performed)
+ 12. Elapsed Time Per Partition
+ 13. Analysis & Synthesis Messages
+
+
+
+----------------
+; Legal Notice ;
+----------------
+Copyright (C) 1991-2012 Altera Corporation
+Your use of Altera Corporation's design tools, logic functions 
+and other software and tools, and its AMPP partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Altera Program License 
+Subscription Agreement, Altera MegaCore Function License 
+Agreement, or other applicable license agreement, including, 
+without limitation, that your use is for the sole purpose of 
+programming logic devices manufactured by Altera and sold by 
+Altera or its authorized distributors.  Please refer to the 
+applicable agreement for further details.
+
+
+
++-------------------------------------------------------------------------------+
+; Analysis & Synthesis Summary                                                  ;
++------------------------------------+------------------------------------------+
+; Analysis & Synthesis Status        ; Successful - Sun Nov 16 21:43:18 2014    ;
+; Quartus II 32-bit Version          ; 12.0 Build 178 05/31/2012 SJ Web Edition ;
+; Revision Name                      ; piano                                    ;
+; Top-level Entity Name              ; piano                                    ;
+; Family                             ; Cyclone III                              ;
+; Total logic elements               ; 0                                        ;
+;     Total combinational functions  ; 0                                        ;
+;     Dedicated logic registers      ; 0                                        ;
+; Total registers                    ; 0                                        ;
+; Total pins                         ; 11                                       ;
+; Total virtual pins                 ; 0                                        ;
+; Total memory bits                  ; 0                                        ;
+; Embedded Multiplier 9-bit elements ; 0                                        ;
+; Total PLLs                         ; 0                                        ;
++------------------------------------+------------------------------------------+
+
+
++----------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Settings                                                                                        ;
++----------------------------------------------------------------------------+--------------------+--------------------+
+; Option                                                                     ; Setting            ; Default Value      ;
++----------------------------------------------------------------------------+--------------------+--------------------+
+; Device                                                                     ; EP3C5E144C8        ;                    ;
+; Top-level entity name                                                      ; piano              ; piano              ;
+; Family name                                                                ; Cyclone III        ; Cyclone IV GX      ;
+; Use smart compilation                                                      ; Off                ; Off                ;
+; Enable parallel Assembler and TimeQuest Timing Analyzer during compilation ; On                 ; On                 ;
+; Enable compact report table                                                ; Off                ; Off                ;
+; Restructure Multiplexers                                                   ; Auto               ; Auto               ;
+; Create Debugging Nodes for IP Cores                                        ; Off                ; Off                ;
+; Preserve fewer node names                                                  ; On                 ; On                 ;
+; Disable OpenCore Plus hardware evaluation                                  ; Off                ; Off                ;
+; Verilog Version                                                            ; Verilog_2001       ; Verilog_2001       ;
+; VHDL Version                                                               ; VHDL_1993          ; VHDL_1993          ;
+; State Machine Processing                                                   ; Auto               ; Auto               ;
+; Safe State Machine                                                         ; Off                ; Off                ;
+; Extract Verilog State Machines                                             ; On                 ; On                 ;
+; Extract VHDL State Machines                                                ; On                 ; On                 ;
+; Ignore Verilog initial constructs                                          ; Off                ; Off                ;
+; Iteration limit for constant Verilog loops                                 ; 5000               ; 5000               ;
+; Iteration limit for non-constant Verilog loops                             ; 250                ; 250                ;
+; Add Pass-Through Logic to Inferred RAMs                                    ; On                 ; On                 ;
+; Infer RAMs from Raw Logic                                                  ; On                 ; On                 ;
+; Parallel Synthesis                                                         ; On                 ; On                 ;
+; DSP Block Balancing                                                        ; Auto               ; Auto               ;
+; NOT Gate Push-Back                                                         ; On                 ; On                 ;
+; Power-Up Don't Care                                                        ; On                 ; On                 ;
+; Remove Redundant Logic Cells                                               ; Off                ; Off                ;
+; Remove Duplicate Registers                                                 ; On                 ; On                 ;
+; Ignore CARRY Buffers                                                       ; Off                ; Off                ;
+; Ignore CASCADE Buffers                                                     ; Off                ; Off                ;
+; Ignore GLOBAL Buffers                                                      ; Off                ; Off                ;
+; Ignore ROW GLOBAL Buffers                                                  ; Off                ; Off                ;
+; Ignore LCELL Buffers                                                       ; Off                ; Off                ;
+; Ignore SOFT Buffers                                                        ; On                 ; On                 ;
+; Limit AHDL Integers to 32 Bits                                             ; Off                ; Off                ;
+; Optimization Technique                                                     ; Balanced           ; Balanced           ;
+; Carry Chain Length                                                         ; 70                 ; 70                 ;
+; Auto Carry Chains                                                          ; On                 ; On                 ;
+; Auto Open-Drain Pins                                                       ; On                 ; On                 ;
+; Perform WYSIWYG Primitive Resynthesis                                      ; Off                ; Off                ;
+; Auto ROM Replacement                                                       ; On                 ; On                 ;
+; Auto RAM Replacement                                                       ; On                 ; On                 ;
+; Auto DSP Block Replacement                                                 ; On                 ; On                 ;
+; Auto Shift Register Replacement                                            ; Auto               ; Auto               ;
+; Allow Shift Register Merging across Hierarchies                            ; Auto               ; Auto               ;
+; Auto Clock Enable Replacement                                              ; On                 ; On                 ;
+; Strict RAM Replacement                                                     ; Off                ; Off                ;
+; Allow Synchronous Control Signals                                          ; On                 ; On                 ;
+; Force Use of Synchronous Clear Signals                                     ; Off                ; Off                ;
+; Auto RAM Block Balancing                                                   ; On                 ; On                 ;
+; Auto RAM to Logic Cell Conversion                                          ; Off                ; Off                ;
+; Auto Resource Sharing                                                      ; Off                ; Off                ;
+; Allow Any RAM Size For Recognition                                         ; Off                ; Off                ;
+; Allow Any ROM Size For Recognition                                         ; Off                ; Off                ;
+; Allow Any Shift Register Size For Recognition                              ; Off                ; Off                ;
+; Use LogicLock Constraints during Resource Balancing                        ; On                 ; On                 ;
+; Ignore translate_off and synthesis_off directives                          ; Off                ; Off                ;
+; Timing-Driven Synthesis                                                    ; On                 ; On                 ;
+; Report Parameter Settings                                                  ; On                 ; On                 ;
+; Report Source Assignments                                                  ; On                 ; On                 ;
+; Report Connectivity Checks                                                 ; On                 ; On                 ;
+; Ignore Maximum Fan-Out Assignments                                         ; Off                ; Off                ;
+; Synchronization Register Chain Length                                      ; 2                  ; 2                  ;
+; PowerPlay Power Optimization                                               ; Normal compilation ; Normal compilation ;
+; HDL message level                                                          ; Level2             ; Level2             ;
+; Suppress Register Optimization Related Messages                            ; Off                ; Off                ;
+; Number of Removed Registers Reported in Synthesis Report                   ; 5000               ; 5000               ;
+; Number of Swept Nodes Reported in Synthesis Report                         ; 5000               ; 5000               ;
+; Number of Inverted Registers Reported in Synthesis Report                  ; 100                ; 100                ;
+; Clock MUX Protection                                                       ; On                 ; On                 ;
+; Auto Gated Clock Conversion                                                ; Off                ; Off                ;
+; Block Design Naming                                                        ; Auto               ; Auto               ;
+; SDC constraint protection                                                  ; Off                ; Off                ;
+; Synthesis Effort                                                           ; Auto               ; Auto               ;
+; Shift Register Replacement - Allow Asynchronous Clear Signal               ; On                 ; On                 ;
+; Analysis & Synthesis Message Level                                         ; Medium             ; Medium             ;
+; Disable Register Merging Across Hierarchies                                ; Auto               ; Auto               ;
+; Resource Aware Inference For Block RAM                                     ; On                 ; On                 ;
+; Synthesis Seed                                                             ; 1                  ; 1                  ;
++----------------------------------------------------------------------------+--------------------+--------------------+
+
+
+Parallel compilation was disabled, but you have multiple processors available. Enable parallel compilation to reduce compilation time.
++-------------------------------------+
+; Parallel Compilation                ;
++----------------------------+--------+
+; Processors                 ; Number ;
++----------------------------+--------+
+; Number detected on machine ; 8      ;
+; Maximum allowed            ; 1      ;
++----------------------------+--------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                                                                ;
++----------------------------------+-----------------+------------------------------+-------------------------------------------------------------------------+---------+
+; File Name with User-Entered Path ; Used in Netlist ; File Type                    ; File Name with Absolute Path                                            ; Library ;
++----------------------------------+-----------------+------------------------------+-------------------------------------------------------------------------+---------+
+; ../piano.sv                      ; yes             ; User SystemVerilog HDL File  ; C:/Users/ashuka24/Documents/GitHub/e155-f2014-digital_keyboard/piano.sv ;         ;
++----------------------------------+-----------------+------------------------------+-------------------------------------------------------------------------+---------+
+
+
++--------------------------------------------------------------+
+; Analysis & Synthesis Resource Usage Summary                  ;
++---------------------------------------------+----------------+
+; Resource                                    ; Usage          ;
++---------------------------------------------+----------------+
+;                                             ;                ;
+; Total combinational functions               ; 0              ;
+; Logic element usage by number of LUT inputs ;                ;
+;     -- 4 input functions                    ; 0              ;
+;     -- 3 input functions                    ; 0              ;
+;     -- <=2 input functions                  ; 0              ;
+;                                             ;                ;
+; Logic elements by mode                      ;                ;
+;     -- normal mode                          ; 0              ;
+;     -- arithmetic mode                      ; 0              ;
+;                                             ;                ;
+; Total registers                             ; 0              ;
+;     -- Dedicated logic registers            ; 0              ;
+;     -- I/O registers                        ; 0              ;
+;                                             ;                ;
+; I/O pins                                    ; 11             ;
+; Maximum fan-out node                        ; wave[0]~output ;
+; Maximum fan-out                             ; 1              ;
+; Total fan-out                               ; 11             ;
+; Average fan-out                             ; 0.50           ;
++---------------------------------------------+----------------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Utilization by Entity                                                                                                                         ;
++----------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+---------------------+--------------+
+; Compilation Hierarchy Node ; LC Combinationals ; LC Registers ; Memory Bits ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; Full Hierarchy Name ; Library Name ;
++----------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+---------------------+--------------+
+; |piano                     ; 0 (0)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 11   ; 0            ; |piano              ;              ;
++----------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+---------------------+--------------+
+Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
+
+
++----------------------------------------------------------------------------------+
+; Registers Removed During Synthesis                                               ;
++-----------------------------------------+----------------------------------------+
+; Register name                           ; Reason for Removal                     ;
++-----------------------------------------+----------------------------------------+
+; attenuation:sound|attenuated[0..7]      ; Stuck at GND due to stuck port data_in ;
+; process_spi:proc|note1[0]               ; Lost fanout                            ;
+; process_spi:proc|note2[0]               ; Lost fanout                            ;
+; process_spi:proc|note1[1]               ; Lost fanout                            ;
+; process_spi:proc|note2[1]               ; Lost fanout                            ;
+; process_spi:proc|note1[2]               ; Lost fanout                            ;
+; process_spi:proc|note2[2]               ; Lost fanout                            ;
+; process_spi:proc|note1[3]               ; Lost fanout                            ;
+; process_spi:proc|note2[3]               ; Lost fanout                            ;
+; process_spi:proc|note1[4]               ; Lost fanout                            ;
+; process_spi:proc|note2[4]               ; Lost fanout                            ;
+; process_spi:proc|note1[5]               ; Lost fanout                            ;
+; process_spi:proc|note2[5]               ; Lost fanout                            ;
+; process_spi:proc|note1[6]               ; Lost fanout                            ;
+; process_spi:proc|note2[6]               ; Lost fanout                            ;
+; process_spi:proc|note1[7]               ; Lost fanout                            ;
+; process_spi:proc|note2[7]               ; Lost fanout                            ;
+; process_spi:proc|note3[0..7]            ; Lost fanout                            ;
+; attenuation:sound|i[0..3]               ; Lost fanout                            ;
+; attenuation:sound|up[0..31]             ; Lost fanout                            ;
+; spi_slave_receive_only:spi|q[0]         ; Lost fanout                            ;
+; process_spi:proc|cnt[0..6]              ; Lost fanout                            ;
+; spi_slave_receive_only:spi|q[1..23]     ; Lost fanout                            ;
+; attenuation:sound|count[0..23]          ; Lost fanout                            ;
+; Total Number of Removed Registers = 123 ;                                        ;
++-----------------------------------------+----------------------------------------+
+
+
++----------------------------------------------------------------------------------------------------------------------------------------+
+; Removed Registers Triggering Further Register Optimizations                                                                            ;
++---------------------------+--------------------+---------------------------------------------------------------------------------------+
+; Register name             ; Reason for Removal ; Registers Removed due to This Register                                                ;
++---------------------------+--------------------+---------------------------------------------------------------------------------------+
+; attenuation:sound|i[0]    ; Lost Fanouts       ; attenuation:sound|up[31], attenuation:sound|up[30], attenuation:sound|up[29],         ;
+;                           ;                    ; attenuation:sound|up[5], attenuation:sound|up[4], attenuation:sound|up[3],            ;
+;                           ;                    ; attenuation:sound|up[2], attenuation:sound|up[0], attenuation:sound|up[1],            ;
+;                           ;                    ; attenuation:sound|count[1], attenuation:sound|count[0], attenuation:sound|count[2],   ;
+;                           ;                    ; attenuation:sound|count[3], attenuation:sound|count[4], attenuation:sound|count[5],   ;
+;                           ;                    ; attenuation:sound|count[8], attenuation:sound|count[9], attenuation:sound|count[12],  ;
+;                           ;                    ; attenuation:sound|count[13], attenuation:sound|count[16],                             ;
+;                           ;                    ; attenuation:sound|count[17], attenuation:sound|count[20],                             ;
+;                           ;                    ; attenuation:sound|count[21]                                                           ;
+; attenuation:sound|i[1]    ; Lost Fanouts       ; attenuation:sound|i[2], attenuation:sound|i[3], attenuation:sound|count[6],           ;
+;                           ;                    ; attenuation:sound|count[7], attenuation:sound|count[10], attenuation:sound|count[11], ;
+;                           ;                    ; attenuation:sound|count[14], attenuation:sound|count[15],                             ;
+;                           ;                    ; attenuation:sound|count[18], attenuation:sound|count[19],                             ;
+;                           ;                    ; attenuation:sound|count[22], attenuation:sound|count[23]                              ;
+; process_spi:proc|note1[0] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[0], process_spi:proc|cnt[4], process_spi:proc|cnt[3],    ;
+;                           ;                    ; process_spi:proc|cnt[2], process_spi:proc|cnt[1], process_spi:proc|cnt[0],            ;
+;                           ;                    ; process_spi:proc|cnt[5], process_spi:proc|cnt[6]                                      ;
+; process_spi:proc|note2[0] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[8]                                                       ;
+; process_spi:proc|note1[1] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[1]                                                       ;
+; process_spi:proc|note2[1] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[9]                                                       ;
+; process_spi:proc|note1[2] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[2]                                                       ;
+; process_spi:proc|note2[2] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[10]                                                      ;
+; process_spi:proc|note1[3] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[3]                                                       ;
+; process_spi:proc|note2[3] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[11]                                                      ;
+; process_spi:proc|note1[4] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[4]                                                       ;
+; process_spi:proc|note2[4] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[12]                                                      ;
+; process_spi:proc|note1[5] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[5]                                                       ;
+; process_spi:proc|note2[5] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[13]                                                      ;
+; process_spi:proc|note1[6] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[6]                                                       ;
+; process_spi:proc|note2[6] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[14]                                                      ;
+; process_spi:proc|note1[7] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[7]                                                       ;
+; process_spi:proc|note2[7] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[15]                                                      ;
+; process_spi:proc|note3[7] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[23]                                                      ;
+; process_spi:proc|note3[6] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[22]                                                      ;
+; process_spi:proc|note3[5] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[21]                                                      ;
+; process_spi:proc|note3[4] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[20]                                                      ;
+; process_spi:proc|note3[3] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[19]                                                      ;
+; process_spi:proc|note3[2] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[18]                                                      ;
+; process_spi:proc|note3[1] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[17]                                                      ;
+; process_spi:proc|note3[0] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[16]                                                      ;
++---------------------------+--------------------+---------------------------------------------------------------------------------------+
+
+
++------------------------------------------------------+
+; General Register Statistics                          ;
++----------------------------------------------+-------+
+; Statistic                                    ; Value ;
++----------------------------------------------+-------+
+; Total registers                              ; 0     ;
+; Number of registers using Synchronous Clear  ; 0     ;
+; Number of registers using Synchronous Load   ; 0     ;
+; Number of registers using Asynchronous Clear ; 0     ;
+; Number of registers using Asynchronous Load  ; 0     ;
+; Number of registers using Clock Enable       ; 0     ;
+; Number of registers using Preset             ; 0     ;
++----------------------------------------------+-------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                                  ;
++--------------------+-----------+---------------+----------------------+------------------------+-----------------------------------+----------------------------+
+; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered                        ; Example Multiplexer Output ;
++--------------------+-----------+---------------+----------------------+------------------------+-----------------------------------+----------------------------+
+; 5:1                ; 2 bits    ; 6 LEs         ; 2 LEs                ; 4 LEs                  ; |piano|attenuation:sound|i[2]     ;                            ;
+; 5:1                ; 24 bits   ; 72 LEs        ; 24 LEs               ; 48 LEs                 ; |piano|attenuation:sound|count[7] ;                            ;
++--------------------+-----------+---------------+----------------------+------------------------+-----------------------------------+----------------------------+
+
+
++-------------------------------+
+; Elapsed Time Per Partition    ;
++----------------+--------------+
+; Partition Name ; Elapsed Time ;
++----------------+--------------+
+; Top            ; 00:00:00     ;
++----------------+--------------+
+
+
++-------------------------------+
+; Analysis & Synthesis Messages ;
++-------------------------------+
+Info: *******************************************************************
+Info: Running Quartus II 32-bit Analysis & Synthesis
+    Info: Version 12.0 Build 178 05/31/2012 SJ Web Edition
+    Info: Processing started: Sun Nov 16 21:43:16 2014
+Info: Command: quartus_map --read_settings_files=on --write_settings_files=off piano -c piano
+Warning (20028): Parallel compilation is not licensed and has been disabled
+Warning (10229): Verilog HDL Expression warning at piano.sv(83): truncated literal to match 25 bits
+Info (12021): Found 5 design units, including 5 entities, in source file /users/ashuka24/documents/github/e155-f2014-digital_keyboard/piano.sv
+    Info (12023): Found entity 1: piano
+    Info (12023): Found entity 2: spi_slave_receive_only
+    Info (12023): Found entity 3: process_spi
+    Info (12023): Found entity 4: add_notes
+    Info (12023): Found entity 5: attenuation
+Info (12127): Elaborating entity "piano" for the top level hierarchy
+Info (12128): Elaborating entity "spi_slave_receive_only" for hierarchy "spi_slave_receive_only:spi"
+Info (12128): Elaborating entity "process_spi" for hierarchy "process_spi:proc"
+Info (12128): Elaborating entity "add_notes" for hierarchy "add_notes:add"
+Warning (10230): Verilog HDL assignment warning at piano.sv(54): truncated value with size 10 to match size of target (8)
+Info (12128): Elaborating entity "attenuation" for hierarchy "attenuation:sound"
+Warning (13024): Output pins are stuck at VCC or GND
+    Warning (13410): Pin "wave[0]" is stuck at GND
+    Warning (13410): Pin "wave[1]" is stuck at GND
+    Warning (13410): Pin "wave[2]" is stuck at GND
+    Warning (13410): Pin "wave[3]" is stuck at GND
+    Warning (13410): Pin "wave[4]" is stuck at GND
+    Warning (13410): Pin "wave[5]" is stuck at GND
+    Warning (13410): Pin "wave[6]" is stuck at GND
+    Warning (13410): Pin "wave[7]" is stuck at GND
+Info (17049): 115 registers lost all their fanouts during netlist optimizations.
+Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
+    Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
+Warning (21074): Design contains 3 input pin(s) that do not drive logic
+    Warning (15610): No output dependent on input pin "clk"
+    Warning (15610): No output dependent on input pin "sck"
+    Warning (15610): No output dependent on input pin "sdi"
+Info (21057): Implemented 11 device resources after synthesis - the final resource count might be different
+    Info (21058): Implemented 3 input pins
+    Info (21059): Implemented 8 output pins
+Info: Quartus II 32-bit Analysis & Synthesis was successful. 0 errors, 16 warnings
+    Info: Peak virtual memory: 324 megabytes
+    Info: Processing ended: Sun Nov 16 21:43:18 2014
+    Info: Elapsed time: 00:00:02
+    Info: Total CPU time (on all processors): 00:00:01
+
+

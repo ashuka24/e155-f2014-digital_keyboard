@@ -1,0 +1,15 @@
+vendor_name = ModelSim
+source_file = 1, C:/Users/ashuka24/Documents/GitHub/e155-f2014-digital_keyboard/piano.sv
+source_file = 1, C:/Users/ashuka24/Documents/GitHub/e155-f2014-digital_keyboard/Quartus Stuff/db/piano.cbx.xml
+design_name = piano
+instance = comp, \wave[0]~output , wave[0]~output, piano, 1
+instance = comp, \wave[1]~output , wave[1]~output, piano, 1
+instance = comp, \wave[2]~output , wave[2]~output, piano, 1
+instance = comp, \wave[3]~output , wave[3]~output, piano, 1
+instance = comp, \wave[4]~output , wave[4]~output, piano, 1
+instance = comp, \wave[5]~output , wave[5]~output, piano, 1
+instance = comp, \wave[6]~output , wave[6]~output, piano, 1
+instance = comp, \wave[7]~output , wave[7]~output, piano, 1
+instance = comp, \clk~input , clk~input, piano, 1
+instance = comp, \sck~input , sck~input, piano, 1
+instance = comp, \sdi~input , sdi~input, piano, 1

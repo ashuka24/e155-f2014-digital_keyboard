@@ -1,0 +1,233 @@
+// Copyright (C) 1991-2012 Altera Corporation
+// Your use of Altera Corporation's design tools, logic functions 
+// and other software and tools, and its AMPP partner logic 
+// functions, and any output files from any of the foregoing 
+// (including device programming or simulation files), and any 
+// associated documentation or information are expressly subject 
+// to the terms and conditions of the Altera Program License 
+// Subscription Agreement, Altera MegaCore Function License 
+// Agreement, or other applicable license agreement, including, 
+// without limitation, that your use is for the sole purpose of 
+// programming logic devices manufactured by Altera and sold by 
+// Altera or its authorized distributors.  Please refer to the 
+// applicable agreement for further details.
+
+// VENDOR "Altera"
+// PROGRAM "Quartus II 32-bit"
+// VERSION "Version 12.0 Build 178 05/31/2012 SJ Web Edition"
+
+// DATE "11/16/2014 21:43:28"
+
+// 
+// Device: Altera EP3C5E144C8 Package TQFP144
+// 
+
+// 
+// This Verilog file should be used for ModelSim-Altera (SystemVerilog) only
+// 
+
+`timescale 1 ps/ 1 ps
+
+module piano (
+	sck,
+	sdi,
+	clk,
+	wave);
+input 	sck;
+input 	sdi;
+input 	clk;
+output 	[7:0] wave;
+
+// Design Ports Information
+// wave[0]	=>  Location: PIN_1,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// wave[1]	=>  Location: PIN_2,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// wave[2]	=>  Location: PIN_3,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// wave[3]	=>  Location: PIN_4,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// wave[4]	=>  Location: PIN_7,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// wave[5]	=>  Location: PIN_10,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// wave[6]	=>  Location: PIN_11,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// wave[7]	=>  Location: PIN_79,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// clk	=>  Location: PIN_88,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// sck	=>  Location: PIN_99,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// sdi	=>  Location: PIN_75,	 I/O Standard: 2.5 V,	 Current Strength: Default
+
+
+wire gnd;
+wire vcc;
+wire unknown;
+
+assign gnd = 1'b0;
+assign vcc = 1'b1;
+assign unknown = 1'bx;
+
+tri1 devclrn;
+tri1 devpor;
+tri1 devoe;
+// synopsys translate_off
+initial $sdf_annotate("piano_v.sdo");
+// synopsys translate_on
+
+wire \clk~input_o ;
+wire \sck~input_o ;
+wire \sdi~input_o ;
+wire \wave[0]~output_o ;
+wire \wave[1]~output_o ;
+wire \wave[2]~output_o ;
+wire \wave[3]~output_o ;
+wire \wave[4]~output_o ;
+wire \wave[5]~output_o ;
+wire \wave[6]~output_o ;
+wire \wave[7]~output_o ;
+
+
+// Location: IOOBUF_X0_Y23_N2
+cycloneiii_io_obuf \wave[0]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\wave[0]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \wave[0]~output .bus_hold = "false";
+defparam \wave[0]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X0_Y23_N9
+cycloneiii_io_obuf \wave[1]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\wave[1]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \wave[1]~output .bus_hold = "false";
+defparam \wave[1]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X0_Y23_N16
+cycloneiii_io_obuf \wave[2]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\wave[2]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \wave[2]~output .bus_hold = "false";
+defparam \wave[2]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X0_Y22_N2
+cycloneiii_io_obuf \wave[3]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\wave[3]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \wave[3]~output .bus_hold = "false";
+defparam \wave[3]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X0_Y21_N9
+cycloneiii_io_obuf \wave[4]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\wave[4]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \wave[4]~output .bus_hold = "false";
+defparam \wave[4]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X0_Y18_N16
+cycloneiii_io_obuf \wave[5]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\wave[5]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \wave[5]~output .bus_hold = "false";
+defparam \wave[5]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X0_Y18_N23
+cycloneiii_io_obuf \wave[6]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\wave[6]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \wave[6]~output .bus_hold = "false";
+defparam \wave[6]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X34_Y7_N23
+cycloneiii_io_obuf \wave[7]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\wave[7]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \wave[7]~output .bus_hold = "false";
+defparam \wave[7]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOIBUF_X34_Y12_N22
+cycloneiii_io_ibuf \clk~input (
+	.i(clk),
+	.ibar(gnd),
+	.o(\clk~input_o ));
+// synopsys translate_off
+defparam \clk~input .bus_hold = "false";
+defparam \clk~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X34_Y17_N15
+cycloneiii_io_ibuf \sck~input (
+	.i(sck),
+	.ibar(gnd),
+	.o(\sck~input_o ));
+// synopsys translate_off
+defparam \sck~input .bus_hold = "false";
+defparam \sck~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X34_Y3_N22
+cycloneiii_io_ibuf \sdi~input (
+	.i(sdi),
+	.ibar(gnd),
+	.o(\sdi~input_o ));
+// synopsys translate_off
+defparam \sdi~input .bus_hold = "false";
+defparam \sdi~input .simulate_z_as = "z";
+// synopsys translate_on
+
+assign wave[0] = \wave[0]~output_o ;
+
+assign wave[1] = \wave[1]~output_o ;
+
+assign wave[2] = \wave[2]~output_o ;
+
+assign wave[3] = \wave[3]~output_o ;
+
+assign wave[4] = \wave[4]~output_o ;
+
+assign wave[5] = \wave[5]~output_o ;
+
+assign wave[6] = \wave[6]~output_o ;
+
+assign wave[7] = \wave[7]~output_o ;
+
+endmodule

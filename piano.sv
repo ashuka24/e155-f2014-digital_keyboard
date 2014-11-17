@@ -5,8 +5,8 @@
   	skrupa@hmc.edu and axue@hmc.edu
 */
 
-module digital_keyboard(input  logic       sck, sdi, clk,
-                        output logic [7:0] wave);
+module piano(input  logic       sck, sdi, clk,
+             output logic [7:0] wave);
 
 	logic [31:0] q;
 	logic [7:0] notes, note1, note2, note3;
