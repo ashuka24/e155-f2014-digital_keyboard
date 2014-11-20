@@ -26,7 +26,7 @@ endmodule
 // If the slave only need to received data from the master
 // Slave reduces to a simple shift register given by following HDL: 
 module spi_slave_receive_only(input  logic        sck, //from master
-                              input  logic     v  sdi, //from master 
+                              input  logic        sdi, //from master 
                               output logic [31:0] q); // data received
 	always_ff @(posedge sck)
 		q <={q[30:0], sdi}; //shift register
@@ -45,7 +45,7 @@ module process_spi( input logic         sck,
 			note1 <= q[7:0];
 			note2 <= q[15:8];
 			note3 <= q[23:16];
-			notescount <= q[24:25]
+			notescount <= q[25:24];
 			cnt <= '0;
 		end
 		else
@@ -82,7 +82,7 @@ module attenuation(input  logic       clk,
 	// stays at max for 0.5 s
 	// fades out over 3 s
 
-	logic [23:0] count = '0;
+	logic [23:0] cnt = '0;
 	logic [7:0] whole01, frac002, frac004, frac008, frac016, frac032, frac064, frac128;
 	assign whole01 = wave;
 	assign frac002 = wave>>1;
