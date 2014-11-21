@@ -18,9 +18,8 @@ void initSquare(void);
 void initSawtooth(void);
 void initTriangle(void);
 void initSine(void);
-void initPeriods(void);
 
-void getPeriods(unsigned int);
+void getPeriods(unsigned short);
 unsigned int octave_adjust(unsigned int);
 void octave_read(void);
 void getWave(unsigned int);
@@ -31,8 +30,19 @@ void getWave(unsigned int);
 unsigned char octave = 4; // default on middle C
 unsigned int notearray[12];
 unsigned int periods[3];
-unsigned int secondtonano = 10^9; //convert seconds to picoseconds
-unsigned int *periodarray;
+
+unsigned int periodarray[12] = {(1000000000)/261.6,  //C4
+		                   (1000000000)/277.2,  //C#4
+		                   (1000000000)/293.7,  //D4
+		                   (1000000000)/311.1,  //Eb4
+		                   (1000000000)/329.6,  //E4
+		                   (1000000000)/349.2,  //F4
+		                   (1000000000)/370.0,  //F#4
+		                   (1000000000)/392.0,  //G4
+		                   (1000000000)/415.3,  //G#4
+		                   (1000000000)/440,    //A4
+		                   (1000000000)/466.2,  //Bb4
+		                   (1000000000)/493.9}; //B4;
 unsigned char square[512], 
               sawtooth[512], 
               triangle[512]; 
@@ -64,7 +74,7 @@ unsigned char sine[512] = {128, 130, 131, 133, 134, 136, 137, 139, 141, 142, 144
 				    46, 47, 48, 49, 50, 52, 53, 54, 56, 57, 58, 60, 61, 62, 64, 65, 66, 68, 69, 70, 72, 
 				    73, 75, 76, 78, 79, 80, 82, 83, 85, 86, 88, 89, 91, 92, 94, 95, 97, 98, 100, 101, 
 				    103, 105, 106, 108, 109, 111, 112, 114, 115, 117, 119, 120, 122, 123, 125, 126};
-unsigned char canUpdate = 1;
+unsigned char canUpdate = 0;
 unsigned int countNotes = 0;
 /*****************************************************************************
  Main
@@ -72,9 +82,9 @@ unsigned int countNotes = 0;
 void main(void) { 
 
 	TRISB = 0xFFFF; // input from keys
+	AD1PCFG = 0xFFFF; //digital
     TRISD = 0xFF00; // 11-8 are wave selectors
-	TRISE = 0xFFFF;
-	TRISG = 0xFFFF;
+
 	int received;
 
 	initspi(); 				// initialize the SPI port
@@ -82,7 +92,6 @@ void main(void) {
 	initSquare();			// initialize the waves
 	initSawtooth();	
 	initTriangle();
-	initPeriods();
 	
 
     TMR2 = 0;
@@ -98,8 +107,8 @@ void main(void) {
 		 
         octave_read();
         // PORTB is note[12], octave[2], rando[2]
-        notes = (PORTE & 0xFF)<<4 + ((PORTG>>5) & 0xF);
-		PORTD = notes;
+        notes = PORTB>>4;
+
         getPeriods(notes);
         // PORTD is leds[8], wave[4], rando[4]
         getWave((PORTD>>8)%16); // modding keeps everything below what you're modding by
@@ -107,8 +116,9 @@ void main(void) {
         if(periods[0] == 0) {
             send1 = 0; // no note being played
             countNotes = 0;
+			count1 = 0;
         } else if(TMR2*4 >= periods[0]/512) { // TMR2*4 = 18 bits 
-            send1 = currWave[++count1]; // get the sample of the wave
+            send1 = currWave[count1++]; // get the sample of the wave
             TMR2 = 0; // reset timer
             countNotes = 1;
         } else {
@@ -119,9 +129,9 @@ void main(void) {
 
         if(periods[1] == 0) { // repeat for second note, if it ecists
             send2 = 0;
-            countNotes = 1; // only has 1 note
+			count2= 0;
         } else if(TMR3*4 >= periods[1]/512) {
-            send2 = currWave[++count1];
+            send2 = currWave[count1++];
             TMR3 = 0;
             countNotes = 2; // else has 2 notes
         } else {
@@ -131,14 +141,21 @@ void main(void) {
         
         if(periods[2] == 0) { // repeat for third note, if it exists
             send3 = 0; // only has 2 notes
+			count3=0;
         } else if(TMR4*4 >= periods[2]/512) {
-            send3 = currWave[++count1];
+            send3 = currWave[count1++];
             TMR4 = 0;
             countNotes = 3; // else playing all 3 notes
         } else {
             send3 = currWave[count1];
             countNotes = 3;
         }
+
+		//PORTD=send1;
+		//reset counters
+		count1 = count1%511;
+		count2 = count2%511;
+		count3 = count3%511;
 
 
         sendtot = send1 + send2<<8 + send3<<16 + countNotes<<24;  // send all three of the waves
@@ -216,34 +233,23 @@ void initTriangle(void){
 }
 
 
-void initPeriods(){
-    periodarray = (int[]) {secondtonano/261.6,  //C4
-		                   secondtonano/277.2,  //C#4
-		                   secondtonano/293.7,  //D4
-		                   secondtonano/311.1,  //Eb4
-		                   secondtonano/329.6,  //E4
-		                   secondtonano/349.2,  //F4
-		                   secondtonano/370.0,  //F#4
-		                   secondtonano/392.0,  //G4
-		                   secondtonano/415.3,  //G#4
-		                   secondtonano/440,    //A4
-		                   secondtonano/466.2,  //Bb4
-		                   secondtonano/493.9}; //B4
-}
-
 /******************************************************************************
  Period and Octave
 ******************************************************************************/
 
-void getPeriods(unsigned int notes) {
+void getPeriods(unsigned short notes) {
     int count = 0;
     int i = 0;
-    for(; i < 12; i++) {
+	periods[0] = 0;
+	periods[1] = 0;
+	periods[2] =0;
+    while(i < 12) {
         notearray[i] = notes%2; // take the last bit
         if(notes%2 && (count < 3)) { //if the last bit is 1
             periods[count++] = octave_adjust(periodarray[i]); //get init period, adjust by octave, put in periods
         }
-        notes = notes>>1;
+        notes = notes/2;
+		i++;
     }
 }
 
@@ -251,14 +257,14 @@ unsigned int octave_adjust(unsigned int period) {
 	// read the octave and adjusts the frequencies so that they are in the correct octave
 	// frequency gets larger as octave increases. 
 	// A0 = 27.5Hz, A4 = 440Hz, A8 = 7040Hz
-
+	unsigned int prd = period;
 	if (octave > 4){ // shift period up to the higher octave
-		period = period*(2*(octave - 4)); 
+		prd = period*(2*(octave - 4)); 
 	}
 	else if (octave < 4){ // shift period down to the lower octave
-		period = period/(2*(octave)); 
+		prd = period/(2*(octave)); 
 	}
-	return period;
+	return prd;
 }
 
 void octave_read(void){
