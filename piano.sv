@@ -14,12 +14,12 @@ module piano(input  logic       sck, sdi, clk,
     
 	spi_slave_receive_only spi(sck, sdi, q);
 	process_spi proc(sck, q, note1, note2, note3, notescount);
-	//attenuation first(clk, note1, atten1);
-	//attenuation second(clk, note2, atten2);
-	//attenuation third(clk, note3, atten3);
-	//add_notes add(atten1, atten2, atten3, notescount, wave);
-	assign wave = note1;
-	assign led = note1;
+	attenuation first(clk, note1, atten1);
+	attenuation second(clk, note2, atten2);
+	attenuation third(clk, note3, atten3);
+	add_notes add(atten1, atten2, atten3, notescount, wave);
+	//assign wave = note1;
+	//assign led = note1;
     
 
 endmodule
