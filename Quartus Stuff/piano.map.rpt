@@ -1,5 +1,5 @@
 Analysis & Synthesis report for piano
-Sun Nov 16 21:43:18 2014
+Sun Nov 23 21:13:16 2014
 Quartus II 32-bit Version 12.0 Build 178 05/31/2012 SJ Web Edition
 
 
@@ -14,11 +14,15 @@ Quartus II 32-bit Version 12.0 Build 178 05/31/2012 SJ Web Edition
   6. Analysis & Synthesis Resource Usage Summary
   7. Analysis & Synthesis Resource Utilization by Entity
   8. Registers Removed During Synthesis
-  9. Removed Registers Triggering Further Register Optimizations
- 10. General Register Statistics
- 11. Multiplexer Restructuring Statistics (Restructuring Performed)
- 12. Elapsed Time Per Partition
- 13. Analysis & Synthesis Messages
+  9. General Register Statistics
+ 10. Multiplexer Restructuring Statistics (Restructuring Performed)
+ 11. Port Connectivity Checks: "add_notes:add"
+ 12. Port Connectivity Checks: "attenuation:third"
+ 13. Port Connectivity Checks: "attenuation:second"
+ 14. Port Connectivity Checks: "attenuation:first"
+ 15. Port Connectivity Checks: "process_spi:proc"
+ 16. Elapsed Time Per Partition
+ 17. Analysis & Synthesis Messages
 
 
 
@@ -44,16 +48,16 @@ applicable agreement for further details.
 +-------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                  ;
 +------------------------------------+------------------------------------------+
-; Analysis & Synthesis Status        ; Successful - Sun Nov 16 21:43:18 2014    ;
+; Analysis & Synthesis Status        ; Successful - Sun Nov 23 21:13:16 2014    ;
 ; Quartus II 32-bit Version          ; 12.0 Build 178 05/31/2012 SJ Web Edition ;
 ; Revision Name                      ; piano                                    ;
 ; Top-level Entity Name              ; piano                                    ;
 ; Family                             ; Cyclone III                              ;
-; Total logic elements               ; 0                                        ;
-;     Total combinational functions  ; 0                                        ;
-;     Dedicated logic registers      ; 0                                        ;
-; Total registers                    ; 0                                        ;
-; Total pins                         ; 11                                       ;
+; Total logic elements               ; 368                                      ;
+;     Total combinational functions  ; 321                                      ;
+;     Dedicated logic registers      ; 81                                       ;
+; Total registers                    ; 81                                       ;
+; Total pins                         ; 19                                       ;
 ; Total virtual pins                 ; 0                                        ;
 ; Total memory bits                  ; 0                                        ;
 ; Embedded Multiplier 9-bit elements ; 0                                        ;
@@ -167,123 +171,106 @@ Parallel compilation was disabled, but you have multiple processors available. E
 +----------------------------------+-----------------+------------------------------+-------------------------------------------------------------------------+---------+
 
 
-+--------------------------------------------------------------+
-; Analysis & Synthesis Resource Usage Summary                  ;
-+---------------------------------------------+----------------+
-; Resource                                    ; Usage          ;
-+---------------------------------------------+----------------+
-;                                             ;                ;
-; Total combinational functions               ; 0              ;
-; Logic element usage by number of LUT inputs ;                ;
-;     -- 4 input functions                    ; 0              ;
-;     -- 3 input functions                    ; 0              ;
-;     -- <=2 input functions                  ; 0              ;
-;                                             ;                ;
-; Logic elements by mode                      ;                ;
-;     -- normal mode                          ; 0              ;
-;     -- arithmetic mode                      ; 0              ;
-;                                             ;                ;
-; Total registers                             ; 0              ;
-;     -- Dedicated logic registers            ; 0              ;
-;     -- I/O registers                        ; 0              ;
-;                                             ;                ;
-; I/O pins                                    ; 11             ;
-; Maximum fan-out node                        ; wave[0]~output ;
-; Maximum fan-out                             ; 1              ;
-; Total fan-out                               ; 11             ;
-; Average fan-out                             ; 0.50           ;
-+---------------------------------------------+----------------+
++---------------------------------------------------------+
+; Analysis & Synthesis Resource Usage Summary             ;
++---------------------------------------------+-----------+
+; Resource                                    ; Usage     ;
++---------------------------------------------+-----------+
+; Estimated Total logic elements              ; 368       ;
+;                                             ;           ;
+; Total combinational functions               ; 321       ;
+; Logic element usage by number of LUT inputs ;           ;
+;     -- 4 input functions                    ; 201       ;
+;     -- 3 input functions                    ; 54        ;
+;     -- <=2 input functions                  ; 66        ;
+;                                             ;           ;
+; Logic elements by mode                      ;           ;
+;     -- normal mode                          ; 293       ;
+;     -- arithmetic mode                      ; 28        ;
+;                                             ;           ;
+; Total registers                             ; 81        ;
+;     -- Dedicated logic registers            ; 81        ;
+;     -- I/O registers                        ; 0         ;
+;                                             ;           ;
+; I/O pins                                    ; 19        ;
+; Maximum fan-out node                        ; sck~input ;
+; Maximum fan-out                             ; 54        ;
+; Total fan-out                               ; 1300      ;
+; Average fan-out                             ; 2.95      ;
++---------------------------------------------+-----------+
 
 
-+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Analysis & Synthesis Resource Utilization by Entity                                                                                                                         ;
-+----------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+---------------------+--------------+
-; Compilation Hierarchy Node ; LC Combinationals ; LC Registers ; Memory Bits ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; Full Hierarchy Name ; Library Name ;
-+----------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+---------------------+--------------+
-; |piano                     ; 0 (0)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 11   ; 0            ; |piano              ;              ;
-+----------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+---------------------+--------------+
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                            ;
++---------------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+-----------------------------------+--------------+
+; Compilation Hierarchy Node      ; LC Combinationals ; LC Registers ; Memory Bits ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; Full Hierarchy Name               ; Library Name ;
++---------------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+-----------------------------------+--------------+
+; |piano                          ; 321 (0)           ; 81 (0)       ; 0           ; 0            ; 0       ; 0         ; 19   ; 0            ; |piano                            ;              ;
+;    |add_notes:add|              ; 2 (2)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |piano|add_notes:add              ;              ;
+;    |attenuation:first|          ; 65 (65)           ; 25 (25)      ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |piano|attenuation:first          ;              ;
+;    |attenuation:second|         ; 39 (39)           ; 1 (1)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |piano|attenuation:second         ;              ;
+;    |attenuation:third|          ; 204 (204)         ; 1 (1)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |piano|attenuation:third          ;              ;
+;    |process_spi:proc|           ; 11 (11)           ; 29 (29)      ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |piano|process_spi:proc           ;              ;
+;    |spi_slave_receive_only:spi| ; 0 (0)             ; 25 (25)      ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |piano|spi_slave_receive_only:spi ;              ;
++---------------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+-----------------------------------+--------------+
 Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
 
 
-+----------------------------------------------------------------------------------+
-; Registers Removed During Synthesis                                               ;
-+-----------------------------------------+----------------------------------------+
-; Register name                           ; Reason for Removal                     ;
-+-----------------------------------------+----------------------------------------+
-; attenuation:sound|attenuated[0..7]      ; Stuck at GND due to stuck port data_in ;
-; process_spi:proc|note1[0]               ; Lost fanout                            ;
-; process_spi:proc|note2[0]               ; Lost fanout                            ;
-; process_spi:proc|note1[1]               ; Lost fanout                            ;
-; process_spi:proc|note2[1]               ; Lost fanout                            ;
-; process_spi:proc|note1[2]               ; Lost fanout                            ;
-; process_spi:proc|note2[2]               ; Lost fanout                            ;
-; process_spi:proc|note1[3]               ; Lost fanout                            ;
-; process_spi:proc|note2[3]               ; Lost fanout                            ;
-; process_spi:proc|note1[4]               ; Lost fanout                            ;
-; process_spi:proc|note2[4]               ; Lost fanout                            ;
-; process_spi:proc|note1[5]               ; Lost fanout                            ;
-; process_spi:proc|note2[5]               ; Lost fanout                            ;
-; process_spi:proc|note1[6]               ; Lost fanout                            ;
-; process_spi:proc|note2[6]               ; Lost fanout                            ;
-; process_spi:proc|note1[7]               ; Lost fanout                            ;
-; process_spi:proc|note2[7]               ; Lost fanout                            ;
-; process_spi:proc|note3[0..7]            ; Lost fanout                            ;
-; attenuation:sound|i[0..3]               ; Lost fanout                            ;
-; attenuation:sound|up[0..31]             ; Lost fanout                            ;
-; spi_slave_receive_only:spi|q[0]         ; Lost fanout                            ;
-; process_spi:proc|cnt[0..6]              ; Lost fanout                            ;
-; spi_slave_receive_only:spi|q[1..23]     ; Lost fanout                            ;
-; attenuation:sound|count[0..23]          ; Lost fanout                            ;
-; Total Number of Removed Registers = 123 ;                                        ;
-+-----------------------------------------+----------------------------------------+
-
-
-+----------------------------------------------------------------------------------------------------------------------------------------+
-; Removed Registers Triggering Further Register Optimizations                                                                            ;
-+---------------------------+--------------------+---------------------------------------------------------------------------------------+
-; Register name             ; Reason for Removal ; Registers Removed due to This Register                                                ;
-+---------------------------+--------------------+---------------------------------------------------------------------------------------+
-; attenuation:sound|i[0]    ; Lost Fanouts       ; attenuation:sound|up[31], attenuation:sound|up[30], attenuation:sound|up[29],         ;
-;                           ;                    ; attenuation:sound|up[5], attenuation:sound|up[4], attenuation:sound|up[3],            ;
-;                           ;                    ; attenuation:sound|up[2], attenuation:sound|up[0], attenuation:sound|up[1],            ;
-;                           ;                    ; attenuation:sound|count[1], attenuation:sound|count[0], attenuation:sound|count[2],   ;
-;                           ;                    ; attenuation:sound|count[3], attenuation:sound|count[4], attenuation:sound|count[5],   ;
-;                           ;                    ; attenuation:sound|count[8], attenuation:sound|count[9], attenuation:sound|count[12],  ;
-;                           ;                    ; attenuation:sound|count[13], attenuation:sound|count[16],                             ;
-;                           ;                    ; attenuation:sound|count[17], attenuation:sound|count[20],                             ;
-;                           ;                    ; attenuation:sound|count[21]                                                           ;
-; attenuation:sound|i[1]    ; Lost Fanouts       ; attenuation:sound|i[2], attenuation:sound|i[3], attenuation:sound|count[6],           ;
-;                           ;                    ; attenuation:sound|count[7], attenuation:sound|count[10], attenuation:sound|count[11], ;
-;                           ;                    ; attenuation:sound|count[14], attenuation:sound|count[15],                             ;
-;                           ;                    ; attenuation:sound|count[18], attenuation:sound|count[19],                             ;
-;                           ;                    ; attenuation:sound|count[22], attenuation:sound|count[23]                              ;
-; process_spi:proc|note1[0] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[0], process_spi:proc|cnt[4], process_spi:proc|cnt[3],    ;
-;                           ;                    ; process_spi:proc|cnt[2], process_spi:proc|cnt[1], process_spi:proc|cnt[0],            ;
-;                           ;                    ; process_spi:proc|cnt[5], process_spi:proc|cnt[6]                                      ;
-; process_spi:proc|note2[0] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[8]                                                       ;
-; process_spi:proc|note1[1] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[1]                                                       ;
-; process_spi:proc|note2[1] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[9]                                                       ;
-; process_spi:proc|note1[2] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[2]                                                       ;
-; process_spi:proc|note2[2] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[10]                                                      ;
-; process_spi:proc|note1[3] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[3]                                                       ;
-; process_spi:proc|note2[3] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[11]                                                      ;
-; process_spi:proc|note1[4] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[4]                                                       ;
-; process_spi:proc|note2[4] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[12]                                                      ;
-; process_spi:proc|note1[5] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[5]                                                       ;
-; process_spi:proc|note2[5] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[13]                                                      ;
-; process_spi:proc|note1[6] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[6]                                                       ;
-; process_spi:proc|note2[6] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[14]                                                      ;
-; process_spi:proc|note1[7] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[7]                                                       ;
-; process_spi:proc|note2[7] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[15]                                                      ;
-; process_spi:proc|note3[7] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[23]                                                      ;
-; process_spi:proc|note3[6] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[22]                                                      ;
-; process_spi:proc|note3[5] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[21]                                                      ;
-; process_spi:proc|note3[4] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[20]                                                      ;
-; process_spi:proc|note3[3] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[19]                                                      ;
-; process_spi:proc|note3[2] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[18]                                                      ;
-; process_spi:proc|note3[1] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[17]                                                      ;
-; process_spi:proc|note3[0] ; Lost Fanouts       ; spi_slave_receive_only:spi|q[16]                                                      ;
-+---------------------------+--------------------+---------------------------------------------------------------------------------------+
++--------------------------------------------------------------------------------+
+; Registers Removed During Synthesis                                             ;
++----------------------------------------+---------------------------------------+
+; Register name                          ; Reason for Removal                    ;
++----------------------------------------+---------------------------------------+
+; attenuation:second|cnt[7]              ; Merged with attenuation:first|cnt[7]  ;
+; attenuation:third|cnt[7]               ; Merged with attenuation:first|cnt[7]  ;
+; attenuation:second|cnt[6]              ; Merged with attenuation:first|cnt[6]  ;
+; attenuation:third|cnt[6]               ; Merged with attenuation:first|cnt[6]  ;
+; attenuation:second|cnt[5]              ; Merged with attenuation:first|cnt[5]  ;
+; attenuation:third|cnt[5]               ; Merged with attenuation:first|cnt[5]  ;
+; attenuation:second|cnt[4]              ; Merged with attenuation:first|cnt[4]  ;
+; attenuation:third|cnt[4]               ; Merged with attenuation:first|cnt[4]  ;
+; attenuation:second|cnt[3]              ; Merged with attenuation:first|cnt[3]  ;
+; attenuation:third|cnt[3]               ; Merged with attenuation:first|cnt[3]  ;
+; attenuation:second|cnt[2]              ; Merged with attenuation:first|cnt[2]  ;
+; attenuation:third|cnt[2]               ; Merged with attenuation:first|cnt[2]  ;
+; attenuation:second|cnt[1]              ; Merged with attenuation:first|cnt[1]  ;
+; attenuation:third|cnt[1]               ; Merged with attenuation:first|cnt[1]  ;
+; attenuation:second|cnt[0]              ; Merged with attenuation:first|cnt[0]  ;
+; attenuation:third|cnt[0]               ; Merged with attenuation:first|cnt[0]  ;
+; attenuation:second|cnt[8]              ; Merged with attenuation:first|cnt[8]  ;
+; attenuation:third|cnt[8]               ; Merged with attenuation:first|cnt[8]  ;
+; attenuation:second|cnt[9]              ; Merged with attenuation:first|cnt[9]  ;
+; attenuation:third|cnt[9]               ; Merged with attenuation:first|cnt[9]  ;
+; attenuation:second|cnt[10]             ; Merged with attenuation:first|cnt[10] ;
+; attenuation:third|cnt[10]              ; Merged with attenuation:first|cnt[10] ;
+; attenuation:second|cnt[11]             ; Merged with attenuation:first|cnt[11] ;
+; attenuation:third|cnt[11]              ; Merged with attenuation:first|cnt[11] ;
+; attenuation:second|cnt[12]             ; Merged with attenuation:first|cnt[12] ;
+; attenuation:third|cnt[12]              ; Merged with attenuation:first|cnt[12] ;
+; attenuation:second|cnt[13]             ; Merged with attenuation:first|cnt[13] ;
+; attenuation:third|cnt[13]              ; Merged with attenuation:first|cnt[13] ;
+; attenuation:second|cnt[14]             ; Merged with attenuation:first|cnt[14] ;
+; attenuation:third|cnt[14]              ; Merged with attenuation:first|cnt[14] ;
+; attenuation:second|cnt[15]             ; Merged with attenuation:first|cnt[15] ;
+; attenuation:third|cnt[15]              ; Merged with attenuation:first|cnt[15] ;
+; attenuation:second|cnt[16]             ; Merged with attenuation:first|cnt[16] ;
+; attenuation:third|cnt[16]              ; Merged with attenuation:first|cnt[16] ;
+; attenuation:second|cnt[17]             ; Merged with attenuation:first|cnt[17] ;
+; attenuation:third|cnt[17]              ; Merged with attenuation:first|cnt[17] ;
+; attenuation:second|cnt[18]             ; Merged with attenuation:first|cnt[18] ;
+; attenuation:third|cnt[18]              ; Merged with attenuation:first|cnt[18] ;
+; attenuation:second|cnt[19]             ; Merged with attenuation:first|cnt[19] ;
+; attenuation:third|cnt[19]              ; Merged with attenuation:first|cnt[19] ;
+; attenuation:second|cnt[20]             ; Merged with attenuation:first|cnt[20] ;
+; attenuation:third|cnt[20]              ; Merged with attenuation:first|cnt[20] ;
+; attenuation:second|cnt[21]             ; Merged with attenuation:first|cnt[21] ;
+; attenuation:third|cnt[21]              ; Merged with attenuation:first|cnt[21] ;
+; attenuation:second|cnt[22]             ; Merged with attenuation:first|cnt[22] ;
+; attenuation:third|cnt[22]              ; Merged with attenuation:first|cnt[22] ;
+; attenuation:second|cnt[23]             ; Merged with attenuation:first|cnt[23] ;
+; attenuation:third|cnt[23]              ; Merged with attenuation:first|cnt[23] ;
+; Total Number of Removed Registers = 48 ;                                       ;
++----------------------------------------+---------------------------------------+
 
 
 +------------------------------------------------------+
@@ -291,24 +278,71 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +----------------------------------------------+-------+
 ; Statistic                                    ; Value ;
 +----------------------------------------------+-------+
-; Total registers                              ; 0     ;
+; Total registers                              ; 81    ;
 ; Number of registers using Synchronous Clear  ; 0     ;
 ; Number of registers using Synchronous Load   ; 0     ;
 ; Number of registers using Asynchronous Clear ; 0     ;
 ; Number of registers using Asynchronous Load  ; 0     ;
-; Number of registers using Clock Enable       ; 0     ;
+; Number of registers using Clock Enable       ; 22    ;
 ; Number of registers using Preset             ; 0     ;
 +----------------------------------------------+-------+
 
 
-+-----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                                  ;
-+--------------------+-----------+---------------+----------------------+------------------------+-----------------------------------+----------------------------+
-; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered                        ; Example Multiplexer Output ;
-+--------------------+-----------+---------------+----------------------+------------------------+-----------------------------------+----------------------------+
-; 5:1                ; 2 bits    ; 6 LEs         ; 2 LEs                ; 4 LEs                  ; |piano|attenuation:sound|i[2]     ;                            ;
-; 5:1                ; 24 bits   ; 72 LEs        ; 24 LEs               ; 48 LEs                 ; |piano|attenuation:sound|count[7] ;                            ;
-+--------------------+-----------+---------------+----------------------+------------------------+-----------------------------------+----------------------------+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                                       ;
++--------------------+-----------+---------------+----------------------+------------------------+----------------------------------------+----------------------------+
+; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered                             ; Example Multiplexer Output ;
++--------------------+-----------+---------------+----------------------+------------------------+----------------------------------------+----------------------------+
+; 27:1               ; 3 bits    ; 54 LEs        ; 54 LEs               ; 0 LEs                  ; |piano|attenuation:third|attenuated[0] ;                            ;
++--------------------+-----------+---------------+----------------------+------------------------+----------------------------------------+----------------------------+
+
+
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "add_notes:add"                                                                                                                                          ;
++------------+-------+----------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+; Port       ; Type  ; Severity ; Details                                                                                                                                            ;
++------------+-------+----------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+; note1      ; Input ; Warning  ; Input port expression (1 bits) is smaller than the input port (8 bits) it drives.  Extra input bit(s) "note1[7..1]" will be connected to GND.      ;
+; note2      ; Input ; Warning  ; Input port expression (1 bits) is smaller than the input port (8 bits) it drives.  Extra input bit(s) "note2[7..1]" will be connected to GND.      ;
+; note3      ; Input ; Warning  ; Input port expression (1 bits) is smaller than the input port (8 bits) it drives.  Extra input bit(s) "note3[7..1]" will be connected to GND.      ;
+; notescount ; Input ; Warning  ; Input port expression (1 bits) is smaller than the input port (2 bits) it drives.  Extra input bit(s) "notescount[1..1]" will be connected to GND. ;
++------------+-------+----------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+
+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "attenuation:third"                                                                                                                  ;
++------------+--------+----------+-------------------------------------------------------------------------------------------------------------------------------+
+; Port       ; Type   ; Severity ; Details                                                                                                                       ;
++------------+--------+----------+-------------------------------------------------------------------------------------------------------------------------------+
+; attenuated ; Output ; Warning  ; Output or bidir port (8 bits) is wider than the port expression (1 bits) it drives; bit(s) "attenuated[7..1]" have no fanouts ;
++------------+--------+----------+-------------------------------------------------------------------------------------------------------------------------------+
+
+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "attenuation:second"                                                                                                                 ;
++------------+--------+----------+-------------------------------------------------------------------------------------------------------------------------------+
+; Port       ; Type   ; Severity ; Details                                                                                                                       ;
++------------+--------+----------+-------------------------------------------------------------------------------------------------------------------------------+
+; attenuated ; Output ; Warning  ; Output or bidir port (8 bits) is wider than the port expression (1 bits) it drives; bit(s) "attenuated[7..1]" have no fanouts ;
++------------+--------+----------+-------------------------------------------------------------------------------------------------------------------------------+
+
+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "attenuation:first"                                                                                                                  ;
++------------+--------+----------+-------------------------------------------------------------------------------------------------------------------------------+
+; Port       ; Type   ; Severity ; Details                                                                                                                       ;
++------------+--------+----------+-------------------------------------------------------------------------------------------------------------------------------+
+; attenuated ; Output ; Warning  ; Output or bidir port (8 bits) is wider than the port expression (1 bits) it drives; bit(s) "attenuated[7..1]" have no fanouts ;
++------------+--------+----------+-------------------------------------------------------------------------------------------------------------------------------+
+
+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "process_spi:proc"                                                                                                                   ;
++------------+--------+----------+-------------------------------------------------------------------------------------------------------------------------------+
+; Port       ; Type   ; Severity ; Details                                                                                                                       ;
++------------+--------+----------+-------------------------------------------------------------------------------------------------------------------------------+
+; notescount ; Output ; Warning  ; Output or bidir port (2 bits) is wider than the port expression (1 bits) it drives; bit(s) "notescount[1..1]" have no fanouts ;
++------------+--------+----------+-------------------------------------------------------------------------------------------------------------------------------+
 
 
 +-------------------------------+
@@ -316,7 +350,7 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +----------------+--------------+
 ; Partition Name ; Elapsed Time ;
 +----------------+--------------+
-; Top            ; 00:00:00     ;
+; Top            ; 00:00:02     ;
 +----------------+--------------+
 
 
@@ -326,45 +360,56 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 Info: *******************************************************************
 Info: Running Quartus II 32-bit Analysis & Synthesis
     Info: Version 12.0 Build 178 05/31/2012 SJ Web Edition
-    Info: Processing started: Sun Nov 16 21:43:16 2014
+    Info: Processing started: Sun Nov 23 21:13:13 2014
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off piano -c piano
 Warning (20028): Parallel compilation is not licensed and has been disabled
-Warning (10229): Verilog HDL Expression warning at piano.sv(83): truncated literal to match 25 bits
+Warning (10229): Verilog HDL Expression warning at piano.sv(161): truncated literal to match 25 bits
 Info (12021): Found 5 design units, including 5 entities, in source file /users/ashuka24/documents/github/e155-f2014-digital_keyboard/piano.sv
     Info (12023): Found entity 1: piano
     Info (12023): Found entity 2: spi_slave_receive_only
     Info (12023): Found entity 3: process_spi
     Info (12023): Found entity 4: add_notes
     Info (12023): Found entity 5: attenuation
+Warning (10236): Verilog HDL Implicit Net warning at piano.sv(16): created implicit net for "notescount"
+Warning (10236): Verilog HDL Implicit Net warning at piano.sv(17): created implicit net for "atten1"
+Warning (10236): Verilog HDL Implicit Net warning at piano.sv(18): created implicit net for "atten2"
+Warning (10236): Verilog HDL Implicit Net warning at piano.sv(19): created implicit net for "atten3"
 Info (12127): Elaborating entity "piano" for the top level hierarchy
+Warning (10034): Output port "led" at piano.sv(9) has no driver
 Info (12128): Elaborating entity "spi_slave_receive_only" for hierarchy "spi_slave_receive_only:spi"
 Info (12128): Elaborating entity "process_spi" for hierarchy "process_spi:proc"
+Info (12128): Elaborating entity "attenuation" for hierarchy "attenuation:first"
 Info (12128): Elaborating entity "add_notes" for hierarchy "add_notes:add"
-Warning (10230): Verilog HDL assignment warning at piano.sv(54): truncated value with size 10 to match size of target (8)
-Info (12128): Elaborating entity "attenuation" for hierarchy "attenuation:sound"
+Warning (10230): Verilog HDL assignment warning at piano.sv(67): truncated value with size 10 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at piano.sv(69): truncated value with size 10 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at piano.sv(71): truncated value with size 10 to match size of target (8)
+Warning (12241): 5 hierarchies have connectivity warnings - see the Connectivity Checks report folder
 Warning (13024): Output pins are stuck at VCC or GND
-    Warning (13410): Pin "wave[0]" is stuck at GND
-    Warning (13410): Pin "wave[1]" is stuck at GND
     Warning (13410): Pin "wave[2]" is stuck at GND
     Warning (13410): Pin "wave[3]" is stuck at GND
     Warning (13410): Pin "wave[4]" is stuck at GND
     Warning (13410): Pin "wave[5]" is stuck at GND
     Warning (13410): Pin "wave[6]" is stuck at GND
     Warning (13410): Pin "wave[7]" is stuck at GND
-Info (17049): 115 registers lost all their fanouts during netlist optimizations.
+    Warning (13410): Pin "led[0]" is stuck at GND
+    Warning (13410): Pin "led[1]" is stuck at GND
+    Warning (13410): Pin "led[2]" is stuck at GND
+    Warning (13410): Pin "led[3]" is stuck at GND
+    Warning (13410): Pin "led[4]" is stuck at GND
+    Warning (13410): Pin "led[5]" is stuck at GND
+    Warning (13410): Pin "led[6]" is stuck at GND
+    Warning (13410): Pin "led[7]" is stuck at GND
+Info (286030): Timing-Driven Synthesis is running
 Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
     Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
-Warning (21074): Design contains 3 input pin(s) that do not drive logic
-    Warning (15610): No output dependent on input pin "clk"
-    Warning (15610): No output dependent on input pin "sck"
-    Warning (15610): No output dependent on input pin "sdi"
-Info (21057): Implemented 11 device resources after synthesis - the final resource count might be different
+Info (21057): Implemented 387 device resources after synthesis - the final resource count might be different
     Info (21058): Implemented 3 input pins
-    Info (21059): Implemented 8 output pins
-Info: Quartus II 32-bit Analysis & Synthesis was successful. 0 errors, 16 warnings
-    Info: Peak virtual memory: 324 megabytes
-    Info: Processing ended: Sun Nov 16 21:43:18 2014
-    Info: Elapsed time: 00:00:02
-    Info: Total CPU time (on all processors): 00:00:01
+    Info (21059): Implemented 16 output pins
+    Info (21061): Implemented 368 logic cells
+Info: Quartus II 32-bit Analysis & Synthesis was successful. 0 errors, 26 warnings
+    Info: Peak virtual memory: 321 megabytes
+    Info: Processing ended: Sun Nov 23 21:13:16 2014
+    Info: Elapsed time: 00:00:03
+    Info: Total CPU time (on all processors): 00:00:03
 
 

@@ -1,5 +1,5 @@
 Assembler report for piano
-Sun Nov 16 21:43:26 2014
+Sun Nov 23 21:13:28 2014
 Quartus II 32-bit Version 12.0 Build 178 05/31/2012 SJ Web Edition
 
 
@@ -37,7 +37,7 @@ applicable agreement for further details.
 +---------------------------------------------------------------+
 ; Assembler Summary                                             ;
 +-----------------------+---------------------------------------+
-; Assembler Status      ; Successful - Sun Nov 16 21:43:26 2014 ;
+; Assembler Status      ; Successful - Sun Nov 23 21:13:28 2014 ;
 ; Revision Name         ; piano                                 ;
 ; Top-level Entity Name ; piano                                 ;
 ; Family                ; Cyclone III                           ;
@@ -93,7 +93,7 @@ applicable agreement for further details.
 +----------------+-------------------------------------------------------------------------------------------------+
 ; Device         ; EP3C5E144C8                                                                                     ;
 ; JTAG usercode  ; 0xFFFFFFFF                                                                                      ;
-; Checksum       ; 0x00092BD5                                                                                      ;
+; Checksum       ; 0x000C9F93                                                                                      ;
 +----------------+-------------------------------------------------------------------------------------------------+
 
 
@@ -103,13 +103,13 @@ applicable agreement for further details.
 Info: *******************************************************************
 Info: Running Quartus II 32-bit Assembler
     Info: Version 12.0 Build 178 05/31/2012 SJ Web Edition
-    Info: Processing started: Sun Nov 16 21:43:25 2014
+    Info: Processing started: Sun Nov 23 21:13:27 2014
 Info: Command: quartus_asm --read_settings_files=off --write_settings_files=off piano -c piano
 Info (115031): Writing out detailed assembly data for power analysis
 Info (115030): Assembler is generating device programming files
 Info: Quartus II 32-bit Assembler was successful. 0 errors, 0 warnings
-    Info: Peak virtual memory: 329 megabytes
-    Info: Processing ended: Sun Nov 16 21:43:26 2014
+    Info: Peak virtual memory: 319 megabytes
+    Info: Processing ended: Sun Nov 23 21:13:28 2014
     Info: Elapsed time: 00:00:01
     Info: Total CPU time (on all processors): 00:00:01
 
