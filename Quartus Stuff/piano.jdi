@@ -1,6 +1,6 @@
 <sld_project_info>
   <file_info>
-    <file checksum="0x000C9F93" device="EP3C5E144C8" path="piano.sof" usercode="0xFFFFFFFF"/>
+    <file checksum="0x0009A04F" device="EP3C5E144C8" path="//charlie.ac.hmc.edu/HMC_2016/axue/Junior Year/Fall 2014/ENGR155/Final Project/Quartus Stuff/piano.sof" usercode="0xFFFFFFFF"/>
   </file_info>
   <hub_info ir_width="0" node_count="0"/>
   <node_info/>

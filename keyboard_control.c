@@ -31,18 +31,18 @@ unsigned char octave = 4; // default on middle C
 unsigned int notearray[12];
 unsigned int periods[3];
 
-unsigned int periodarray[12] = {(1000000000)/261.6,  //C4
-		                   (1000000000)/277.2,  //C#4
-		                   (1000000000)/293.7,  //D4
-		                   (1000000000)/311.1,  //Eb4
-		                   (1000000000)/329.6,  //E4
-		                   (1000000000)/349.2,  //F4
-		                   (1000000000)/370.0,  //F#4
-		                   (1000000000)/392.0,  //G4
-		                   (1000000000)/415.3,  //G#4
-		                   (1000000000)/440,    //A4
-		                   (1000000000)/466.2,  //Bb4
-		                   (1000000000)/493.9}; //B4;
+unsigned int periodarray[12] = {(40000000)/261.6,  //C4
+		                   (40000000)/277.2,  //C#4
+		                   (40000000)/293.7,  //D4
+		                   (40000000)/311.1,  //Eb4
+		                   (40000000)/329.6,  //E4
+		                   (40000000)/349.2,  //F4
+		                   (40000000)/370.0,  //F#4
+		                   (40000000)/392.0,  //G4
+		                   (40000000)/415.3,  //G#4
+		                   (40000000)/440,    //A4
+		                   (40000000)/466.2,  //Bb4
+		                   (40000000)/493.9}; //B4;
 unsigned char square[512], 
               sawtooth[512], 
               triangle[512]; 
@@ -103,6 +103,8 @@ void main(void) {
     unsigned char send1, send2, send3;
     unsigned int sendtot;
 	
+	spi_send_receive(0xFFFF);
+
 	while(1){
 		 
         octave_read();
@@ -131,11 +133,11 @@ void main(void) {
             send2 = 0;
 			count2= 0;
         } else if(TMR3*4 >= periods[1]/512) {
-            send2 = currWave[count1++];
+            send2 = currWave[count2++];
             TMR3 = 0;
             countNotes = 2; // else has 2 notes
         } else {
-            send2 = currWave[count1];
+            send2 = currWave[count2];
             countNotes = 2;
         }
         
@@ -143,23 +145,30 @@ void main(void) {
             send3 = 0; // only has 2 notes
 			count3=0;
         } else if(TMR4*4 >= periods[2]/512) {
-            send3 = currWave[count1++];
+            send3 = currWave[count3++];
             TMR4 = 0;
             countNotes = 3; // else playing all 3 notes
         } else {
-            send3 = currWave[count1];
+            send3 = currWave[count3];
             countNotes = 3;
         }
 
-		//PORTD=send1;
 		//reset counters
 		count1 = count1%511;
 		count2 = count2%511;
 		count3 = count3%511;
 
+		sendtot = countNotes;
+		sendtot = sendtot<<8;
+		sendtot = sendtot + send3;
+		sendtot = sendtot<<8;
+		sendtot = sendtot + send2;
+		sendtot = sendtot<<8;
+		sendtot = sendtot + send1;
 
-        sendtot = send1 + send2<<8 + send3<<16 + countNotes<<24;  // send all three of the waves
-
+		// PORTD = sendtot>>24;
+        //sendtot = send1 + send2<<8 + send3<<16 + countNotes<<24;  // send all three of the waves
+		
 		spi_send_receive(sendtot);
 
 	}

@@ -14,12 +14,12 @@ module piano(input  logic       sck, sdi, clk,
     
 	spi_slave_receive_only spi(sck, sdi, q);
 	process_spi proc(sck, q, note1, note2, note3, notescount);
-	attenuation first(clk, note1, atten1);
-	attenuation second(clk, note2, atten2);
-	attenuation third(clk, note3, atten3);
-	add_notes add(atten1, atten2, atten3, notescount, wave);
-	//assign wave = note1;
-	//assign led = note1;
+//	attenuation first(clk, note1, atten1);
+//	attenuation second(clk, note2, atten2);
+//	attenuation third(clk, note3, atten3);
+//	add_notes add(atten1, atten2, atten3, notescount, wave);
+	assign wave = note1;
+	assign led = wave;
     
 
 endmodule
@@ -38,19 +38,25 @@ module process_spi( input logic         sck,
                     output logic [7:0]  note1, note2, note3,
                     output logic [1:0]  notescount);
     logic [6:0] cnt = 6'b00_0000; 
+	 logic moved = 1'b0;
     //logic moved = 1'b0; //makes sure iterator doesn't start until initial signal
 	 
 	 always_ff @(negedge sck)
-		if(cnt == 6'd31) // read the note after the entire 32 bit number has come in 
+		if(moved)
 		begin
-			note1 <= q[7:0];
-			note2 <= q[15:8];
-			note3 <= q[23:16];
-			notescount <= q[25:24];
-			cnt <= '0;
+			if(cnt == 6'd31) // read the note after the entire 32 bit number has come in 
+			begin
+				note1 <= q[7:0];
+				note2 <= q[15:8];
+				note3 <= q[23:16];
+				notescount <= q[25:24];
+				cnt <= '0;
+			end
+			else
+				cnt <= cnt + 1'b1;
 		end
-		else
-			cnt <= cnt + 1'b1;
+		else if(~moved && q == 32'hFFFF)
+			moved = 1'b1;
 			
 endmodule
 
