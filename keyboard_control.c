@@ -31,18 +31,18 @@ unsigned char octave = 4; // default on middle C
 unsigned int notearray[12];
 unsigned int periods[3];
 
-unsigned int periodarray[12] = {(40000000)/261.6,  //C4
-		                   (40000000)/277.2,  //C#4
-		                   (40000000)/293.7,  //D4
-		                   (40000000)/311.1,  //Eb4
-		                   (40000000)/329.6,  //E4
-		                   (40000000)/349.2,  //F4
-		                   (40000000)/370.0,  //F#4
-		                   (40000000)/392.0,  //G4
-		                   (40000000)/415.3,  //G#4
-		                   (40000000)/440,    //A4
-		                   (40000000)/466.2,  //Bb4
-		                   (40000000)/493.9}; //B4;
+unsigned int periodarray[12] = {(400000000)/(2616*2*4),  //C4
+		                   (400000000)/(2772*2*4),  //C#4
+		                   (400000000)/(2937*2*4),  //D4
+		                   (400000000)/(3111*2*4),  //Eb4
+		                   (400000000)/(3296*2*4),  //E4
+		                   (400000000)/(3492*2*4),  //F4
+		                   (400000000)/(3700*2*4),  //F#4
+		                   (400000000)/(3920*2*4),  //G4
+		                   (400000000)/(4153*2*4),  //G#4
+		                   (40000000)/(440*2*4),    //A4
+		                   (400000000)/(4662*2*4),  //Bb4
+		                   (400000000)/(4939*2*4)}; //B4;
 unsigned char square[512], 
               sawtooth[512], 
               triangle[512]; 
@@ -76,104 +76,8 @@ unsigned char sine[512] = {128, 130, 131, 133, 134, 136, 137, 139, 141, 142, 144
 				    103, 105, 106, 108, 109, 111, 112, 114, 115, 117, 119, 120, 122, 123, 125, 126};
 unsigned char canUpdate = 0;
 unsigned int countNotes = 0;
-/*****************************************************************************
- Main
-*****************************************************************************/
-void main(void) { 
-
-	TRISB = 0xFFFF; // input from keys
-	AD1PCFG = 0xFFFF; //digital
-    TRISD = 0xFF00; // 11-8 are wave selectors
-
-	int received;
-
-	initspi(); 				// initialize the SPI port
-	initTimers();
-	initSquare();			// initialize the waves
-	initSawtooth();	
-	initTriangle();
-	
-
-    TMR2 = 0;
-    TMR3 = 0;
-    TMR4 = 0;
-
-    unsigned short count1 = 0, count2 = 0, count3 = 0;
-    unsigned short notes = 0;
-    unsigned char send1, send2, send3;
-    unsigned int sendtot;
-	
-	spi_send_receive(0xFFFF);
-
-	while(1){
-		 
-        octave_read();
-        // PORTB is note[12], octave[2], rando[2]
-        notes = PORTB>>4;
-
-        getPeriods(notes);
-        // PORTD is leds[8], wave[4], rando[4]
-        getWave((PORTD>>8)%16); // modding keeps everything below what you're modding by
-    	
-        if(periods[0] == 0) {
-            send1 = 0; // no note being played
-            countNotes = 0;
-			count1 = 0;
-        } else if(TMR2*4 >= periods[0]/512) { // TMR2*4 = 18 bits 
-            send1 = currWave[count1++]; // get the sample of the wave
-            TMR2 = 0; // reset timer
-            countNotes = 1;
-        } else {
-            send1 = currWave[count1];
-            countNotes = 1;
-        }
-	    
-
-        if(periods[1] == 0) { // repeat for second note, if it ecists
-            send2 = 0;
-			count2= 0;
-        } else if(TMR3*4 >= periods[1]/512) {
-            send2 = currWave[count2++];
-            TMR3 = 0;
-            countNotes = 2; // else has 2 notes
-        } else {
-            send2 = currWave[count2];
-            countNotes = 2;
-        }
-        
-        if(periods[2] == 0) { // repeat for third note, if it exists
-            send3 = 0; // only has 2 notes
-			count3=0;
-        } else if(TMR4*4 >= periods[2]/512) {
-            send3 = currWave[count3++];
-            TMR4 = 0;
-            countNotes = 3; // else playing all 3 notes
-        } else {
-            send3 = currWave[count3];
-            countNotes = 3;
-        }
-
-		//reset counters
-		count1 = count1%511;
-		count2 = count2%511;
-		count3 = count3%511;
-
-		sendtot = countNotes;
-		sendtot = sendtot<<8;
-		sendtot = sendtot + send3;
-		sendtot = sendtot<<8;
-		sendtot = sendtot + send2;
-		sendtot = sendtot<<8;
-		sendtot = sendtot + send1;
-
-		// PORTD = sendtot>>24;
-        //sendtot = send1 + send2<<8 + send3<<16 + countNotes<<24;  // send all three of the waves
-		
-		spi_send_receive(sendtot);
-
-	}
-	 
-}
+unsigned char prescalar = 4;
+unsigned char perifclk = 2;
 
 /******************************************************************************
  SPI Interfacing
@@ -186,13 +90,14 @@ void initspi(void) {
 	SPI2BRG = 7; //set BAUD rate to 1.25MHz, with Pclk at 20MHz 
 	SPI2CONbits.MSTEN = 1; // enable master mode
 	SPI2CONbits.CKE = 1; // set clock-to-data timing (data centered on rising SCK edge) 
-	SPI2CONbits.ON = 1; // turn SPI on
 	SPI2CONbits.MODE32 = 1; // put SPI in 32 bit mode
+	SPI2CONbits.ON = 1; // turn SPI on
+	
 }
 
 int spi_send_receive(int send) {
 	SPI2BUF = send; // send data to slave
-	while (!SPI2STATbits.SPIBUSY); // wait until received buffer fills, indicating data received 
+	//while (!SPI2STATbits.SPIBUSY); // wait until received buffer fills, indicating data received 
 	return SPI2BUF; // return received data and clear the read buffer full
 }
 
@@ -213,8 +118,8 @@ void initTimers(void){
 	//	bit 1:	TCS=0: use internal peripheral clock
 	//	bit 0:	unused
 	T2CON = 0b1000000001000000;
-    T3CON = 0b1000000001000000;
-    T4CON = 0b1000000001000000;
+    T3CON = 0b1000000000100000;
+    T4CON = 0b1000000000100000;
 }
 
 void initSquare(void){
@@ -228,17 +133,27 @@ void initSquare(void){
 
 void initSawtooth(void){
 	int i = 0;
-	for(;i < 512; i++){
+	while(i < 512){
 		sawtooth[i] = i/2;
+		i++;
 	}
 }
 
 void initTriangle(void){
 	int i = 0;
-	for(; i < 256; i++){
-		square[i]=i;
-		square[511-i] = i;
+	while(i < 256){
+		triangle[i]=i;
+		triangle[511-i] = i;
+		i++;
 	}
+}
+
+void initSine(void) {
+	int i = 0;
+	while (i < 512) {
+		sine[i] = sine[i]/2;
+		i++;
+	}	
 }
 
 
@@ -255,23 +170,34 @@ void getPeriods(unsigned short notes) {
     while(i < 12) {
         notearray[i] = notes%2; // take the last bit
         if(notes%2 && (count < 3)) { //if the last bit is 1
-            periods[count++] = octave_adjust(periodarray[i]); //get init period, adjust by octave, put in periods
-        }
+            periods[count] = octave_adjust(periodarray[i]); //get init period, adjust by octave, put in periods
+        	count++;
+		}
         notes = notes/2;
 		i++;
     }
 }
 
+//need to implement power *****
 unsigned int octave_adjust(unsigned int period) {
 	// read the octave and adjusts the frequencies so that they are in the correct octave
 	// frequency gets larger as octave increases. 
 	// A0 = 27.5Hz, A4 = 440Hz, A8 = 7040Hz
+	int i;
 	unsigned int prd = period;
 	if (octave > 4){ // shift period up to the higher octave
-		prd = period*(2*(octave - 4)); 
+		i = (octave - 4);
+		while(i>0) {
+			prd = period*2; 
+			i--;
+		}
 	}
 	else if (octave < 4){ // shift period down to the lower octave
-		prd = period/(2*(octave)); 
+		i = 4-octave;
+		while(i>0){
+			prd = period/2; 
+			i--;
+		}	
 	}
 	return prd;
 }
@@ -291,37 +217,7 @@ void octave_read(void){
 	}
 		
 }
-/*
-void getWave(unsigned int wave) {
-	// determines the wave to use
-	int i = 0;
-    switch(wave) {
-        case 0x0008 : 
-			while(i<512) {
-				currWave[i] = square[i];
-				i++;
-			}
- 			break;
-        case 0x0004 : 
-			while(i<512) {
-				currWave[i] = sawtooth[i];
-				i++;
-			}
- 			break;
-        case 0x0002 :
-			while(i<512) {
-				currWave[i] = triangle[i];
-				i++;
-			}
- 			break;
-        default     : 
-			while(i<512) {
-				currWave[i] = sawtooth[i];
-				i++;
-			}
- 			break;
-    }
-}*/
+
 void getWave(unsigned int wave) {
 	// determines the wave to use
     switch(wave) {
@@ -329,6 +225,122 @@ void getWave(unsigned int wave) {
         case 0x0004 : currWave = sawtooth; break;
         case 0x0002 : currWave = triangle; break;
         case 0x0001 : currWave = sine; break;
-        default     : currWave = sine;
+        default     : currWave = square;
     }
+}
+
+/*****************************************************************************
+ Main
+*****************************************************************************/
+void main(void) { 
+
+	TRISB = 0xFFFF; // input from keys
+	AD1PCFG = 0xFFFF; //digital
+    TRISD = 0xFF00; // 11-8 are wave selectors
+
+	int received;
+
+	initspi(); 				// initialize the SPI port
+	initTimers();
+	initSquare();			// initialize the waves
+	initSawtooth();	
+	initTriangle();
+	//initSine();
+	
+
+    TMR2 = 0;
+    TMR3 = 0;
+    TMR4 = 0;
+
+    unsigned short count1 = 0, count2 = 0, count3 = 0;
+	unsigned char count4 = 0;
+    unsigned short notes = 0;
+    unsigned char send1, send2, send3;
+    unsigned int sendtot;
+	unsigned int chktmr2,chktmr3,chktmr4;
+	unsigned int period1, period2, period3;
+	
+	spi_send_receive(0xFFFF);
+
+	while(1){
+		if (count4 == 0) {
+	        octave_read();
+	        // PORTB is note[12], octave[2], rando[2]
+	        notes = PORTB>>4;
+	        getPeriods(notes);
+	        // PORTD is leds[8], wave[4], rando[4]
+	        getWave((PORTD>>8)%16); // modding keeps everything below what you're modding by
+
+			
+		}
+		count4++;
+
+		
+		period1 = periods[0];
+		period2 = periods[1];
+		period3 = periods[2];
+		chktmr2 = TMR2;
+		chktmr3 = TMR3;
+		chktmr4 = TMR4;
+		
+
+        if(period1 == 0) {
+            send1 = 0; // no note being played
+            countNotes = 0;
+			count1 = 0;
+        } else {
+			if(chktmr2 >= period1/16) {
+	            TMR2 = 0;
+				count1+=32;
+			}
+			send1 = currWave[count1];
+			countNotes = 1;
+        } 
+
+        if(period2 == 0) {
+            send2 = 0; // no note being played
+			count2 = 0;
+        } else {
+			if(chktmr3 >= period2/16) {
+	            TMR3 = 0;
+				count2+=32;
+			}
+			send2 = currWave[count2];
+			countNotes = 2;
+        } 
+
+		if(period3 == 0) {
+            send3 = 0; // no note being played
+			count3 = 0;
+        } else {
+			if(chktmr4 >= period3/16) {
+	            TMR4 = 0;
+				count3+=32;
+			}
+			send3 = currWave[count3];
+			countNotes = 3;
+        } 
+
+		if(count1 > 511)
+			count1 = 0;
+		if(count2 > 5111)
+			count2 = 0;
+		if(count3 > 511)
+			count3 = 0;
+
+		sendtot = countNotes;
+		sendtot = sendtot<<8;
+		sendtot = sendtot + send3;
+		sendtot = sendtot<<8;
+		sendtot = sendtot + send2;
+		sendtot = sendtot<<8;
+		sendtot = sendtot + send1;
+
+		//PORTD = send1;
+		//PORTD = sendtot>>24;
+        //sendtot = send1 + send2<<8 + send3<<16 + countNotes<<24;  // send all three of the waves
+		spi_send_receive(sendtot);
+
+	}
+	 
 }
