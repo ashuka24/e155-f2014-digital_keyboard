@@ -23,7 +23,7 @@ void getPeriods(unsigned short);
 unsigned int octave_adjust(unsigned int);
 void octave_read(void);
 void getWave(unsigned int);
-unsigned char sampleWave(unsigned int, unsigned int);
+
 /*****************************************************************************
  Macros and Global Variables
 *****************************************************************************/
@@ -74,9 +74,10 @@ const unsigned char sine[512] = {128, 130, 131, 133, 134, 136, 137, 139, 141, 14
 				    23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 39, 40, 41, 42, 43, 44, 
 				    46, 47, 48, 49, 50, 52, 53, 54, 56, 57, 58, 60, 61, 62, 64, 65, 66, 68, 69, 70, 72, 
 				    73, 75, 76, 78, 79, 80, 82, 83, 85, 86, 88, 89, 91, 92, 94, 95, 97, 98, 100, 101, 
-				    103, 105, 106, 108, 109, 111, 112, 114, 115, 117, 119, 120, 122, 123, 125, 126};*/
+				    103, 105, 106, 108, 109, 111, 112, 114, 115, 117, 119, 120, 122, 123, 125, 126};
+*/
 
-const unsigned char sine = [128, 
+unsigned char sine[2048] = {128, 
 128, 129, 129, 130, 130, 130, 131, 131, 132, 132, 132, 133, 133, 133, 134, 134, 135, 135, 135, 136, 
 136, 137, 137, 137, 138, 138, 139, 139, 139, 140, 140, 141, 141, 141, 142, 142, 142, 143, 143, 144, 
 144, 144, 145, 145, 146, 146, 146, 147, 147, 148, 148, 148, 149, 149, 149, 150, 150, 151, 151, 151, 
@@ -179,7 +180,7 @@ const unsigned char sine = [128,
 102, 102, 103, 103, 103, 104, 104, 105, 105, 105, 106, 106, 107, 107, 107, 108, 108, 108, 109, 109, 
 110, 110, 110, 111, 111, 112, 112, 112, 113, 113, 114, 114, 114, 115, 115, 115, 116, 116, 117, 117, 
 117, 118, 118, 119, 119, 119, 120, 120, 121, 121, 121, 122, 122, 123, 123, 123, 124, 124, 124, 125, 
-125, 126, 126, 126, 127, 127, 128]; 
+125, 126, 126, 126, 127, 127, 128}; 
 
 unsigned char canUpdate = 0;
 unsigned int countNotes = 0;
@@ -192,7 +193,7 @@ void initspi(void) {
 
 	SPI2CONbits.ON = 0; // disable SPI to reset any previous state
 	junk = SPI2BUF; // read SPI buffer to clear the receive buffer
-	SPI2BRG = 7; //set BAUD rate to 1.25MHz, with Pclk at 20MHz 
+	SPI2BRG = 0; //set BAUD rate to 1.25MHz, with Pclk at 20MHz 
 	SPI2CONbits.MSTEN = 1; // enable master mode
 	SPI2CONbits.CKE = 1; // set clock-to-data timing (data centered on rising SCK edge) 
 	SPI2CONbits.MODE32 = 1; // put SPI in 32 bit mode
@@ -202,7 +203,7 @@ void initspi(void) {
 
 int spi_send_receive(int send) {
 	SPI2BUF = send; // send data to slave
-	//while (!SPI2STATbits.SPIBUSY); // wait until received buffer fills, indicating data received 
+	while (!SPI2STATbits.SPIBUSY); // wait until received buffer fills, indicating data received 
 	return SPI2BUF; // return received data and clear the read buffer full
 }
 
@@ -327,11 +328,18 @@ void getWave(unsigned int wave) {
     }
 }*/
 
-unsigned char sampleWave(unsigned int wave, unsigned int period, unsigned int timerval) {
-
-	double ratio = timeval/period;
+unsigned char sampleWave(unsigned int wave, unsigned int period, unsigned int timerval, int timer) {
+	double ratio = (double)(timerval)/period;
+	
+	//timer passed period
 	if(ratio>1) {
 		ratio = 1;
+		if(timer == 2)
+			TMR2 = 0;
+		else if(timer == 3)
+			TMR3 = 0;
+		else if(timer == 4)
+			TMR4 = 0;
 	}
 
 	unsigned int index = 0;
@@ -397,7 +405,7 @@ void main(void) {
 	spi_send_receive(0xFFFF);
 
 	while(1){
-		if (count4 > 5000) {
+		if (count4 > 1500) {
 	        octave_read();
 	        // PORTB is note[12], octave[2], rando[2]
 	        notes = PORTB>>4;
@@ -426,11 +434,8 @@ void main(void) {
             countNotes = 0;
 			count1 = 0;
         } else {
-			if(chktmr2 >= period1) {
-	            TMR2 = 0;
-			}
 			//send1 = currWave[count1];
-			send1 = sampleWave(wave, period1, chktmr2);
+			send1 = sampleWave(wave, period1, chktmr2, 2);
 			countNotes = 1;
         } 
 
@@ -438,11 +443,8 @@ void main(void) {
             send2 = 0; // no note being played
 			count2 = 0;
         } else {
-			if(chktmr3 >= period2) {
-	            TMR3 = 0;
-			}
 			//send2 = currWave[count2];
-			send2 = sampleWave(wave, period2, chktmr3);
+			send2 = sampleWave(wave, period2, chktmr3, 3);
 			countNotes = 2;
         } 
 
@@ -450,20 +452,18 @@ void main(void) {
             send3 = 0; // no note being played
 			count3 = 0;
         } else {
-			if(chktmr4 >= period3) {
-	            TMR4 = 0;
-			}
 			//send3 = currWave[count3];
-			send3 = sampleWave(wave, period3, chktmr3);
+			send3 = sampleWave(wave, period3, chktmr3, 4);
 			countNotes = 3;
         } 
-
+/*
 		if(count1 > 511)
 			count1 = 0;
 		if(count2 > 511)
 			count2 = 0;
 		if(count3 > 511)
 			count3 = 0;
+*/
 
 		sendtot = countNotes;
 		sendtot = sendtot<<8;
