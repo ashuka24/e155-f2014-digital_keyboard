@@ -66,7 +66,7 @@ module dacProcess(input logic clk,
 					begin
 					dclk <= 1'b1;
 					end
-				if (cnt2 == 7'd15)
+				if (cnt2 == 7'd5)
 					begin
 					data <= wavekeep[7];
 					wavekeep <= {wavekeep[6:0], 1'b0};
