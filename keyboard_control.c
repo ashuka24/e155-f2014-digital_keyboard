@@ -23,7 +23,7 @@ void getPeriods(unsigned short);
 unsigned int octave_adjust(unsigned int);
 void octave_read(void);
 void getWave(unsigned int);
-
+unsigned char sampleWave(unsigned int, unsigned int);
 /*****************************************************************************
  Macros and Global Variables
 *****************************************************************************/
@@ -31,23 +31,23 @@ unsigned char octave = 4; // default on middle C
 unsigned int notearray[12];
 unsigned int periods[3];
 
-unsigned int periodarray[12] = {(400000000)/(2616*2*4),  //C4
-		                   (400000000)/(2772*2*4),  //C#4
-		                   (400000000)/(2937*2*4),  //D4
-		                   (400000000)/(3111*2*4),  //Eb4
-		                   (400000000)/(3296*2*4),  //E4
-		                   (400000000)/(3492*2*4),  //F4
-		                   (400000000)/(3700*2*4),  //F#4
-		                   (400000000)/(3920*2*4),  //G4
-		                   (400000000)/(4153*2*4),  //G#4
-		                   (40000000)/(440*2*4),    //A4
-		                   (400000000)/(4662*2*4),  //Bb4
-		                   (400000000)/(4939*2*4)}; //B4;
+const unsigned int periodarray[12] = {(400000000)/(2616*2),  //C4
+		                   (400000000)/(2772*2),  //C#4
+		                   (400000000)/(2937*2),  //D4
+		                   (400000000)/(3111*2),  //Eb4
+		                   (400000000)/(3296*2),  //E4
+		                   (400000000)/(3492*2),  //F4
+		                   (400000000)/(3700*2),  //F#4
+		                   (400000000)/(3920*2),  //G4
+		                   (400000000)/(4153*2),  //G#4
+		                   (40000000)/(440*2),    //A4
+		                   (400000000)/(4662*2),  //Bb4
+		                   (400000000)/(4939*2)}; //B4;
 unsigned char square[512], 
               sawtooth[512], 
               triangle[512]; 
 unsigned char* currWave;
-unsigned char sine[512] = {128, 130, 131, 133, 134, 136, 137, 139, 141, 142, 144, 145, 147, 148, 150, 151, 153, 
+const unsigned char sine[512] = {128, 130, 131, 133, 134, 136, 137, 139, 141, 142, 144, 145, 147, 148, 150, 151, 153, 
 					155, 156, 158, 159, 161, 162, 164, 165, 167, 168, 170, 171, 173, 174, 176, 177, 178, 
 					180, 181, 183, 184, 186, 187, 188, 190, 191, 192, 194, 195, 196, 198, 199, 200, 202, 
 					203, 204, 206, 207, 208, 209, 210, 212, 213, 214, 215, 216, 217, 219, 220, 221, 222, 
@@ -117,9 +117,9 @@ void initTimers(void){
 	//	bit 2:	unused
 	//	bit 1:	TCS=0: use internal peripheral clock
 	//	bit 0:	unused
-	T2CON = 0b1000000001000000;
-    T3CON = 0b1000000000100000;
-    T4CON = 0b1000000000100000;
+	T2CON = 0b1000000000010000;
+    T3CON = 0b1000000000010000;
+    T4CON = 0b1000000000010000;
 }
 
 void initSquare(void){
@@ -148,13 +148,6 @@ void initTriangle(void){
 	}
 }
 
-void initSine(void) {
-	int i = 0;
-	while (i < 512) {
-		sine[i] = sine[i]/2;
-		i++;
-	}	
-}
 
 
 /******************************************************************************
@@ -229,6 +222,20 @@ void getWave(unsigned int wave) {
     }
 }
 
+unsigned char sampleWave(unsigned int wave, unsigned int index) {
+	unsigned char result = 0;
+/*
+	switch(wave) {
+        case 0x0008 : result = square[index]; break;
+        case 0x0004 : result = sawtooth[index]; break;
+        case 0x0002 : result = triangle[index]; break;
+        case 0x0001 : result = sine[index]; break;
+        default     : result = square[index];	
+	}	
+	return result;*/
+	return sine[index];
+}
+
 /*****************************************************************************
  Main
 *****************************************************************************/
@@ -237,6 +244,7 @@ void main(void) {
 	TRISB = 0xFFFF; // input from keys
 	AD1PCFG = 0xFFFF; //digital
     TRISD = 0xFF00; // 11-8 are wave selectors
+	TRISF = 0xFFFF;
 
 	int received;
 
@@ -245,7 +253,6 @@ void main(void) {
 	initSquare();			// initialize the waves
 	initSawtooth();	
 	initTriangle();
-	//initSine();
 	
 
     TMR2 = 0;
@@ -253,32 +260,38 @@ void main(void) {
     TMR4 = 0;
 
     unsigned short count1 = 0, count2 = 0, count3 = 0;
-	unsigned char count4 = 0;
+	unsigned short count4 = 0;
     unsigned short notes = 0;
-    unsigned char send1, send2, send3;
+    unsigned char send1= 0, send2=0, send3=0;
     unsigned int sendtot;
 	unsigned int chktmr2,chktmr3,chktmr4;
-	unsigned int period1, period2, period3;
+	unsigned int period1 = 0, period2 = 0, period3 = 0;
+	unsigned char samples = 8;
+	unsigned char indexmult = 64;
+	unsigned int wave = 0;
 	
 	spi_send_receive(0xFFFF);
 
 	while(1){
-		if (count4 == 0) {
+		if (count4 > 5000) {
 	        octave_read();
 	        // PORTB is note[12], octave[2], rando[2]
 	        notes = PORTB>>4;
 	        getPeriods(notes);
 	        // PORTD is leds[8], wave[4], rando[4]
-	        getWave((PORTD>>8)%16); // modding keeps everything below what you're modding by
+	        //getWave((PORTD>>8)%16); // modding keeps everything below what you're modding by
+			wave = (PORTD>>8)%16;
+			period1 = periods[0];
+			period2 = periods[1];
+			period3 = periods[2];
 
+			count4 = 0;
 			
 		}
 		count4++;
 
 		
-		period1 = periods[0];
-		period2 = periods[1];
-		period3 = periods[2];
+		
 		chktmr2 = TMR2;
 		chktmr3 = TMR3;
 		chktmr4 = TMR4;
@@ -289,11 +302,12 @@ void main(void) {
             countNotes = 0;
 			count1 = 0;
         } else {
-			if(chktmr2 >= period1/16) {
+			if(chktmr2 >= period1/samples) {
 	            TMR2 = 0;
-				count1+=32;
+				count1+=indexmult;
 			}
-			send1 = currWave[count1];
+			//send1 = currWave[count1];
+			send1 = sampleWave(wave, count1);
 			countNotes = 1;
         } 
 
@@ -301,11 +315,12 @@ void main(void) {
             send2 = 0; // no note being played
 			count2 = 0;
         } else {
-			if(chktmr3 >= period2/16) {
+			if(chktmr3 >= period2/samples) {
 	            TMR3 = 0;
-				count2+=32;
+				count2+=indexmult;
 			}
-			send2 = currWave[count2];
+			//send2 = currWave[count2];
+			send2 = sampleWave(wave, count2);
 			countNotes = 2;
         } 
 
@@ -313,17 +328,18 @@ void main(void) {
             send3 = 0; // no note being played
 			count3 = 0;
         } else {
-			if(chktmr4 >= period3/16) {
+			if(chktmr4 >= period3/samples) {
 	            TMR4 = 0;
-				count3+=32;
+				count3+=indexmult;
 			}
-			send3 = currWave[count3];
+			//send3 = currWave[count3];
+			send3 = sampleWave(wave, count3);
 			countNotes = 3;
         } 
 
 		if(count1 > 511)
 			count1 = 0;
-		if(count2 > 5111)
+		if(count2 > 511)
 			count2 = 0;
 		if(count3 > 511)
 			count3 = 0;
@@ -336,9 +352,6 @@ void main(void) {
 		sendtot = sendtot<<8;
 		sendtot = sendtot + send1;
 
-		//PORTD = send1;
-		//PORTD = sendtot>>24;
-        //sendtot = send1 + send2<<8 + send3<<16 + countNotes<<24;  // send all three of the waves
 		spi_send_receive(sendtot);
 
 	}
