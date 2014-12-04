@@ -179,11 +179,17 @@ module attenuation(input  logic       clk,
 
 	logic [31:0] cnt = 32'b0;
 	logic [7:0] whole01, frac002, frac004, frac008, frac016, frac032, frac064, frac128;
-
+	
 	always_ff @(posedge clk)
-		 begin         
-         
-		if(cnt < 32'd625000) 
+		 begin
+		 if(wave == 8'b0)
+				cnt <= 32'b0;
+			else if (cnt < 32'd120000000)
+				cnt <= cnt + 1'b1;
+			else
+				cnt <= 32'd120000000;
+			
+			if(cnt < 32'd625000)	
          begin 
             whole01 <=  8'b0;
             frac002 <=  8'b0;
@@ -192,7 +198,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <= wave[7:6];
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd1250000) 
          begin 
@@ -203,7 +209,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd1875000) 
          begin 
@@ -214,7 +220,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd2500000) 
          begin 
@@ -225,7 +231,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <= wave[7:5];
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd3125000) 
          begin 
@@ -236,7 +242,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd3750000) 
          begin 
@@ -247,7 +253,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd4375000) 
          begin 
@@ -258,7 +264,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd5000000) 
          begin 
@@ -269,7 +275,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd5625000) 
          begin 
@@ -280,7 +286,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd6250000) 
          begin 
@@ -291,7 +297,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd6875000) 
          begin 
@@ -302,7 +308,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd7500000) 
          begin 
@@ -313,7 +319,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <= wave[7:5];
             frac064 <= wave[7:6];
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd8125000) 
          begin 
@@ -324,7 +330,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd8750000) 
          begin 
@@ -335,7 +341,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <=  8'b0;
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd9375000) 
          begin 
@@ -346,7 +352,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];   
          end
          else if(cnt < 32'd10000000) 
          begin 
@@ -357,7 +363,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd10625000) 
          begin 
@@ -368,7 +374,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <= wave[7:5];
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd11250000) 
          begin 
@@ -379,7 +385,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd11875000) 
          begin 
@@ -390,7 +396,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd12500000) 
          begin 
@@ -401,7 +407,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd13125000) 
          begin 
@@ -412,7 +418,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd13750000) 
          begin 
@@ -423,7 +429,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd14375000) 
          begin 
@@ -434,7 +440,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <= wave[7:5];
             frac064 <=  8'b0;
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd15000000) 
          begin 
@@ -445,7 +451,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <= wave[7:5];
             frac064 <= wave[7:6];
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd15625000) 
          begin 
@@ -456,7 +462,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd16250000) 
          begin 
@@ -467,7 +473,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd16875000) 
          begin 
@@ -478,7 +484,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd17500000) 
          begin 
@@ -489,7 +495,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd18125000) 
          begin 
@@ -500,7 +506,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd18750000) 
          begin 
@@ -511,7 +517,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd19375000) 
          begin 
@@ -522,7 +528,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <= wave[7:5];
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd20000000) // end attack
          begin 
@@ -533,7 +539,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'h2625A00) //sustain
 			begin
@@ -544,7 +550,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
 				end
 			else if(cnt < 32'd41250000) //start decay
          begin 
@@ -555,7 +561,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <=  8'b0;            
+            frac128 <=  8'b0;       
          end
          else if(cnt < 32'd42500000) 
          begin 
@@ -566,7 +572,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <= wave[7:5];
             frac064 <= wave[7:6];
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd43750000) 
          begin 
@@ -577,7 +583,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <= wave[7:5];
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];   
          end
          else if(cnt < 32'd45000000) 
          begin 
@@ -588,7 +594,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <= wave[7:5];
             frac064 <=  8'b0;
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd46250000) 
          begin 
@@ -599,7 +605,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd47500000) 
          begin 
@@ -610,7 +616,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd48750000) 
          begin 
@@ -621,7 +627,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd50000000) 
          begin 
@@ -632,7 +638,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd51250000) 
          begin 
@@ -643,7 +649,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd52500000) 
          begin 
@@ -654,7 +660,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <= wave[7:6];
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd53750000) 
          begin 
@@ -665,7 +671,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd55000000) 
          begin 
@@ -676,7 +682,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <=  8'b0;
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd56250000) 
          begin 
@@ -687,7 +693,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd57500000) 
          begin 
@@ -698,7 +704,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd58750000) 
          begin 
@@ -709,7 +715,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd60000000) 
          begin 
@@ -720,7 +726,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd61250000) 
          begin 
@@ -731,7 +737,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <= wave[7:5];
             frac064 <= wave[7:6];
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd62500000) 
          begin 
@@ -742,7 +748,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <= wave[7:5];
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd63750000) 
          begin 
@@ -753,7 +759,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <= wave[7:5];
             frac064 <=  8'b0;
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd65000000) 
          begin 
@@ -764,7 +770,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd66250000) 
          begin 
@@ -775,7 +781,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd67500000) 
          begin 
@@ -786,7 +792,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd68750000) 
          begin 
@@ -797,7 +803,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd70000000) 
          begin 
@@ -808,7 +814,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <= wave[7:6];
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd71250000) 
          begin 
@@ -819,7 +825,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd72500000) 
          begin 
@@ -830,7 +836,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd73750000) 
          begin 
@@ -841,7 +847,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd75000000) 
          begin 
@@ -852,7 +858,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd76250000) 
          begin 
@@ -863,7 +869,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd77500000) 
          begin 
@@ -874,7 +880,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <= wave[7:5];
             frac064 <= wave[7:6];
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd78750000) 
          begin 
@@ -885,7 +891,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <= wave[7:5];
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd80000000) 
          begin 
@@ -896,7 +902,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd81250000) 
          begin 
@@ -907,7 +913,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd82500000) 
          begin 
@@ -918,7 +924,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd83750000) 
          begin 
@@ -929,7 +935,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd85000000) 
          begin 
@@ -940,7 +946,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <= wave[7:6];
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd86250000) 
          begin 
@@ -951,7 +957,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <=  8'b0;
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd87500000) 
          begin 
@@ -962,7 +968,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd88750000) 
          begin 
@@ -973,7 +979,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd90000000) 
          begin 
@@ -984,7 +990,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd91250000) 
          begin 
@@ -995,7 +1001,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <= wave[7:5];
             frac064 <= wave[7:6];
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd92500000) 
          begin 
@@ -1006,7 +1012,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <= wave[7:5];
             frac064 <=  8'b0;
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd93750000) 
          begin 
@@ -1017,7 +1023,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd95000000) 
          begin 
@@ -1028,7 +1034,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd96250000) 
          begin 
@@ -1039,7 +1045,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd97500000) 
          begin 
@@ -1050,7 +1056,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];   
          end
          else if(cnt < 32'd98750000) 
          begin 
@@ -1062,17 +1068,17 @@ module attenuation(input  logic       clk,
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
             frac128 <= wave[7];  
-         end
+         end        
          else if(cnt < 32'd100000000) 
          begin 
             whole01 <=  8'b0;
             frac002 <= wave[7:1];
             frac004 <=  8'b0;
             frac008 <=  8'b0;
-            frac016 <=  8'b0;
+				frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];   
          end
          else if(cnt < 32'd101250000) 
          begin 
@@ -1083,7 +1089,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd102500000) 
          begin 
@@ -1094,7 +1100,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <= wave[7:5];
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd103750000) 
          begin 
@@ -1105,7 +1111,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd105000000) 
          begin 
@@ -1116,7 +1122,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd106250000) 
          begin 
@@ -1127,7 +1133,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd107500000) 
          begin 
@@ -1138,7 +1144,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd108750000) 
          begin 
@@ -1149,7 +1155,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd110000000) 
          begin 
@@ -1160,7 +1166,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <=  8'b0;
             frac064 <=  8'b0;
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd111250000) 
          begin 
@@ -1171,7 +1177,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <= wave[7:5];
             frac064 <=  8'b0;
-            frac128 <= wave[7];  
+            frac128 <= wave[7];   
          end
          else if(cnt < 32'd112500000) 
          begin 
@@ -1182,7 +1188,7 @@ module attenuation(input  logic       clk,
             frac016 <= wave[7:4];
             frac032 <=  8'b0;
             frac064 <= wave[7:6];
-            frac128 <=  8'b0;
+            frac128 <=  8'b0;  
          end
          else if(cnt < 32'd113750000) 
          begin 
@@ -1193,7 +1199,7 @@ module attenuation(input  logic       clk,
             frac016 <=  8'b0;
             frac032 <= wave[7:5];
             frac064 <= wave[7:6];
-            frac128 <= wave[7];  
+            frac128 <= wave[7];    
          end
          else if(cnt < 32'd115000000) 
          begin 
@@ -1252,7 +1258,6 @@ module attenuation(input  logic       clk,
          end
          else
          begin
-            cnt <= 32'b0;
             whole01 <=  8'b0;
             frac002 <=  8'b0;
             frac004 <=  8'b0;
@@ -1261,8 +1266,8 @@ module attenuation(input  logic       clk,
             frac032 <=  8'b0;
             frac064 <=  8'b0;
             frac128 <=  8'b0;
-         end
+         end	
 		 attenuated <= whole01 + frac002 + frac004 + frac008 + frac016 + frac032 + frac064 + frac128;
-		 cnt <= cnt+1'b1;
+		 
 		 end
 endmodule
