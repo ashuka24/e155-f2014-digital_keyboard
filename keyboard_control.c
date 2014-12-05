@@ -182,7 +182,7 @@ unsigned char sine[2048] = {128,
 117, 118, 118, 119, 119, 119, 120, 120, 121, 121, 121, 122, 122, 123, 123, 123, 124, 124, 124, 125, 
 125, 126, 126, 126, 127, 127, 128}; 
 
-unsigned char canUpdate = 0;
+unsigned char canUpdate = 1;
 unsigned int countNotes = 0;
 
 /******************************************************************************
@@ -287,14 +287,14 @@ unsigned int octave_adjust(unsigned int period) {
 	if (octave > 4){ // shift period up to the higher octave
 		i = (octave - 4);
 		while(i>0) {
-			prd = period*2; 
+			prd = prd/2; 
 			i--;
 		}
 	}
 	else if (octave < 4){ // shift period down to the lower octave
 		i = 4-octave;
 		while(i>0){
-			prd = period/2; 
+			prd = prd*2; 
 			i--;
 		}	
 	}
@@ -377,6 +377,7 @@ void main(void) {
 	TRISB = 0xFFFF; // input from keys
 	AD1PCFG = 0xFFFF; //digital
     TRISD = 0xFF00; // 11-8 are wave selectors
+	TRISE = 0x0000; //output to 7 segment
 
 	int received;
 
@@ -418,11 +419,30 @@ void main(void) {
 			period3 = periods[2];
 
 			count4 = 0;
-			
+			switch(octave) {
+				case  0 : PORTE = 0b10000001; break;
+				case  1 : PORTE = 0b11110011; break;
+				case  2 : PORTE = 0b01001001; break;
+				case  3 : PORTE = 0b01100001; break;
+				case  4 : PORTE = 0b00110011; break;
+				case  5 : PORTE = 0b00100101; break;
+				case  6 : PORTE = 0b00000101; break;
+				case  7 : PORTE = 0b11110001; break;
+				case  8 : PORTE = 0b00000001; break;
+				case  9 : PORTE = 0b00110001; break;
+				case 10 : PORTE = 0b00010001; break; //A
+				case 11 : PORTE = 0b00000111; break; //B
+				case 12 : PORTE = 0b01001111; break; //C
+				case 13 : PORTE = 0b01000011; break; //D
+				case 14 : PORTE = 0b00001101; break; //E
+				case 15 : PORTE = 0b00011101; break; //F
+				default:  PORTE = 0b00000000; break; //not between 0 and 16, display 88
+
+				}
 		}
 		count4++;
 
-		
+		PORTD = octave;
 		
 		chktmr2 = TMR2;
 		chktmr3 = TMR3;
