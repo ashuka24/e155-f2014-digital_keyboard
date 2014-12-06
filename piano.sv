@@ -153,24 +153,32 @@ module add_notes(input logic [7:0] note1, note2, note3,
                  output logic [7:0] notes);
     
     logic [9:0] intermed, sft2, sft4, sft6, sft8;
-    logic [1:0] notescountmod;
+    logic [1:0] notescountmod, together1, together2;
     assign notescountmod = notescount;// - done1 - done2 - done3; // if the notes being played is dependent on if a previous note has stopped playing
     assign intermed = (note1 + note2 + note3);
     assign sft2 = intermed>>2;
     assign sft4 = intermed>>4;
     assign sft6 = intermed>>6;
     assign sft8 = intermed>>8;
-	 
-	 always_ff @(posedge clk)
-		if (start2 > done1)
-			
+     
+     always_ff @(posedge clk)
+        if (start2 > done1)
+            together1 <= 1'b1;
+        else 
+            together1 <= 1'b0;
+        if (start3 > done2)
+            together2 <= 1'b1;
+        else 
+            together2 <=1'b0;
+
+            
 
     always_comb 
-        if (notescountmod == 2'b01) // if only one note being played
+        if (notescount == 2'b01) // if only one note being played
             notes = intermed;
-        else if (notescountmod == 2'b10) // if 2 notes being played
+        else if (together1 == 1'b1 & notescount == 2'b10) // if 2 notes being played
             notes = intermed>>1;
-        else if (notescountmod == 2'b11)
+        else if (together2 == 1'b1 & notescount == 2'b11)
             notes = sft2+sft4+sft6+sft8; //if 3 notes being played, divide by 3.011 = ~3
         else // no note being played
             notes = '0;
