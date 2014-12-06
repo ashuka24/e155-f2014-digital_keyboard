@@ -175,10 +175,10 @@ module add_notes(input logic [7:0] note1, note2, note3,
             together3 <= 1'b1;
         else 
             together3 <= 1'b0;
-        if (start3 == done1 & start3 == ~done2))
-            together4 <= 1'b1;
-        else 
-            together4 <= 1'b0;
+//        if (start3 == done1 & start3 == ~done2)
+//            together4 <= 1'b1;
+//        else 
+//            together4 <= 1'b0;
         end
 
             
@@ -195,8 +195,8 @@ module add_notes(input logic [7:0] note1, note2, note3,
         else if (notescount == 2'b11)
             if (together3 == 1'b1) // if the third note was played before the first two notes finished
                 notes = sft2+sft4+sft6+sft8; //if 3 notes being played, divide by 3.011 = ~3
-            else if(together4 == 1'b1) // if the third note was played before the second note finished
-                notes = sft2+sft4+sft6+sft8; //if 3 notes being played, divide by 3.011 = ~3
+//            else if(together4 == 1'b1) // if the third note was played before the second note finished
+//                notes = sft2+sft4+sft6+sft8; //if 3 notes being played, divide by 3.011 = ~3
             else if (together2 == 1'b1) // if 2 notes were played after the first note finished
                 notes = intermed>>1;
             else // if the third note was played after the first and second note finished
