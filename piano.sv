@@ -153,7 +153,7 @@ module add_notes(input logic [7:0] note1, note2, note3,
                  output logic [7:0] notes);
     
     logic [9:0] intermed, sft2, sft4, sft6, sft8;
-    logic [1:0] notescountmod, together1, together2, together3;
+    logic [1:0] notescountmod, together1, together2, together3, together4;
     assign notescountmod = notescount;// - done1 - done2 - done3; // if the notes being played is dependent on if a previous note has stopped playing
     assign intermed = (note1 + note2 + note3);
     assign sft2 = intermed>>2;
@@ -175,6 +175,10 @@ module add_notes(input logic [7:0] note1, note2, note3,
             together3 <= 1'b1;
         else 
             together3 <= 1'b0;
+        if (start3 > (done1 & ~done2))
+            together4 <= 1'b1;
+        else 
+            together4 <= 1'b0;
         end
 
             
@@ -189,11 +193,13 @@ module add_notes(input logic [7:0] note1, note2, note3,
             else
                 notes = intermed;  // if the second note was played after the first note finished
         else if (notescount == 2'b11)
-            if (together3 == 1'b1 & notescount == 2'b11) // if the third note was played before the first two notes finished
+            if (together3 == 1'b1) // if the third note was played before the first two notes finished
                 notes = sft2+sft4+sft6+sft8; //if 3 notes being played, divide by 3.011 = ~3
-            else if (together2 == 1'b1) // if the third note was played after the first and second note finished
+            else if(together4 == 1'b1) // if the third note was played before the second note finished
+                notes = sft2+sft4+sft6+sft8; //if 3 notes being played, divide by 3.011 = ~3
+            else if (together2 == 1'b1) // if 2 notes were played after the first note finished
                 notes = intermed>>1;
-            else
+            else // if the third note was played after the first and second note finished
                 notes = intermed;
         else
             notes = '0; // no note being played
