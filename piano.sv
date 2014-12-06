@@ -162,6 +162,7 @@ module add_notes(input logic [7:0] note1, note2, note3,
     assign sft8 = intermed>>8;
      
      always_ff @(posedge clk)
+        begin
         if (start2 > done1)
             together1 <= 1'b1;
         else 
@@ -170,18 +171,27 @@ module add_notes(input logic [7:0] note1, note2, note3,
             together2 <= 1'b1;
         else 
             together2 <=1'b0;
+        end
 
             
 
     always_comb 
+        begin
         if (notescount == 2'b01) // if only one note being played
             notes = intermed;
-        else if (together1 == 1'b1 & notescount == 2'b10) // if 2 notes being played
+        else 
+            notes = '0;
+        if (together1 == 1'b1 & notescount == 2'b10) // if 2 notes being played
             notes = intermed>>1;
-        else if (together2 == 1'b1 & notescount == 2'b11)
+        else if (together1 == 1'b0 & notescount == 2'b10)
+            notes = intermed;
+        if (together2 == 1'b1 & notescount == 2'b11)
             notes = sft2+sft4+sft6+sft8; //if 3 notes being played, divide by 3.011 = ~3
+        else if (together2 == 1'b0 & notescount == 2'b11)
+            notes = intermed>>1;
         else // no note being played
             notes = '0;
+        end
 
 endmodule
 
