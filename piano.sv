@@ -163,14 +163,18 @@ module add_notes(input logic [7:0] note1, note2, note3,
      
      always_ff @(posedge clk)
         begin
-        if (start2 > done1)
+        if (start2 > done1) // if the second note starts before the first one ends
             together1 <= 1'b1;
         else 
-            together1 <= 1'b0;
-        if (start3 > done2)
+            together1 <= 1'b0; // otherwise the two notes weren't played together
+        if (start3 > done2) // if the third note starts before the second one finishes
             together2 <= 1'b1;
         else 
-            together2 <=1'b0;
+            together2 <=1'b0; 
+        if (start3 > (done1 & done2)) // if the third note starts before the first two notes end
+            together3 <= 1'b1;
+        else 
+            together3 <= 1'b0;
         end
 
             
@@ -181,14 +185,19 @@ module add_notes(input logic [7:0] note1, note2, note3,
             notes = intermed;
         else 
             notes = '0;
-        if (together1 == 1'b1 & notescount == 2'b10) // if 2 notes being played
+        if (notescount == 2'b10) // if 2 notes being played
+            if (together)
             notes = intermed>>1;
-        else if (together1 == 1'b0 & notescount == 2'b10)
+        else if (together1 == 1'b0 & notescount == 2'b10) // if the second note was played after the first note finished
             notes = intermed;
-        if (together2 == 1'b1 & notescount == 2'b11)
+        else 
+            notes = '0;
+        if (together3 == 1'b1 & notescount == 2'b11)
             notes = sft2+sft4+sft6+sft8; //if 3 notes being played, divide by 3.011 = ~3
-        else if (together2 == 1'b0 & notescount == 2'b11)
+        else if (together2 == 1'b1 & notescount == 2'b11) // if the third note was played after the first and second note finished
             notes = intermed>>1;
+        else if (together3 == 1'b0 & notescount == 2'b11)
+            notes = intermed;
         else // no note being played
             notes = '0;
         end
