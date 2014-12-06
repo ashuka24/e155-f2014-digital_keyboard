@@ -191,14 +191,20 @@ module attenuation(input  logic       clk,
     always_ff @(posedge clk)
         begin
         if(wave == 8'b0) // if no wave, counter hasn't started
+        begin
             cnt <= 32'b0;
             doneattenuating <= 1'b0;
+        end
         else if (cnt < 32'd120000000) // hasn't reached 3 sec? increment
+        begin
             cnt <= cnt + 1'b1;
             doneattenuating <= 1'b0;
+        end
         else
+        begin
             cnt <= 32'd120000000; // reached 3 sec, so stop counting and set counter
             doneattenuating <= 1'b1;
+        end
         
 
         if(cnt < 32'd750000) // note initial rise
