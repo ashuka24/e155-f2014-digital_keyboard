@@ -24,9 +24,9 @@ module piano(input  logic       sck, sdi, clk,
     attenuation first(clk, note1, atten1, start1, done1);
     attenuation second(clk, note2, atten2, start2, done2);
     attenuation third(clk, note3, atten3, start3, done3);
-     add_notes add(atten1, atten2, atten3, start1, start2, start3, done1, done2, done3, notescount, wave);
+    add_notes add(atten1, atten2, atten3, clk, start1, start2, start3, done1, done2, done3, notescount, wave);
     //assign wave = note1;
-     assign led = start1;
+    assign led = {start1, done1, start2, done2, start3, done3};
     dacProcess dac(clk, wave, data, dclk, load, ldac);
      
     
@@ -148,23 +148,27 @@ endmodule
 
 // adds the three notes together (if there are three) and makes sure the amplitude doesn't change
 module add_notes(input logic [7:0] note1, note2, note3,
-                 input logic start1, start2, start3, done1, done2, done3,
+                 input logic clk, start1, start2, start3, done1, done2, done3,
                  input logic [1:0] notescount,
                  output logic [7:0] notes);
     
     logic [9:0] intermed, sft2, sft4, sft6, sft8;
     logic [1:0] notescountmod;
-    assign notescountmod = notescount - done1 - done2 - done3; // if the notes being played is dependent on if a previous note has stopped playing
+    assign notescountmod = notescount;// - done1 - done2 - done3; // if the notes being played is dependent on if a previous note has stopped playing
     assign intermed = (note1 + note2 + note3);
     assign sft2 = intermed>>2;
     assign sft4 = intermed>>4;
     assign sft6 = intermed>>6;
     assign sft8 = intermed>>8;
+	 
+	 always_ff @(posedge clk)
+		if (start2 > done1)
+			
 
     always_comb 
         if (notescountmod == 2'b01) // if only one note being played
             notes = intermed;
-        else if (notescountmod == 2'b10 & ) // if 2 notes being played
+        else if (notescountmod == 2'b10) // if 2 notes being played
             notes = intermed>>1;
         else if (notescountmod == 2'b11)
             notes = sft2+sft4+sft6+sft8; //if 3 notes being played, divide by 3.011 = ~3
