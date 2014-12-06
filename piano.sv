@@ -183,8 +183,6 @@ module add_notes(input logic [7:0] note1, note2, note3,
         begin
         if (notescount == 2'b01) // if only one note being played
             notes = intermed;
-        else 
-            notes = '0;
         else if (notescount == 2'b10) // if 2 notes being played
             if (together1 == 1'b1)
                 notes = intermed>>1;
