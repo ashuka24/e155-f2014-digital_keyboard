@@ -152,10 +152,11 @@ module add_notes(input logic [7:0] note1, note2, note3,
                  input logic [1:0] notescount,
                  output logic [7:0] notes);
     
-    logic [9:0] intermed, sft2, sft4, sft6, sft8;
+    logic [9:0] intermed, intermed2, sft2, sft4, sft6, sft8;
     logic [1:0] notescountmod, together1, together2, together3, together4;
     assign notescountmod = notescount;// - done1 - done2 - done3; // if the notes being played is dependent on if a previous note has stopped playing
     assign intermed = (note1 + note2 + note3);
+	 assign intermed2 = (note2 + note3);
     assign sft2 = intermed>>2;
     assign sft4 = intermed>>4;
     assign sft6 = intermed>>6;
@@ -167,18 +168,18 @@ module add_notes(input logic [7:0] note1, note2, note3,
             together1 <= 1'b1;
         else 
             together1 <= 1'b0; // otherwise the two notes weren't played together
-        if (start3 > done2) // if the third note starts before the second one finishes
-            together2 <= 1'b1;
-        else 
-            together2 <=1'b0; 
+//        if (start3 > done2) // if the third note starts before the second one finishes
+//            together2 <= 1'b1;
+//        else 
+//            together2 <=1'b0; 
         if (start3 > (done1 & done2)) // if the third note starts before the first two notes end
             together3 <= 1'b1;
         else 
             together3 <= 1'b0;
-//        if (start3 == done1 & start3 == ~done2)
-//            together4 <= 1'b1;
-//        else 
-//            together4 <= 1'b0;
+        if (start3 == done2 & together3 == 1'b1)
+            together4 <= 1'b1;
+        else 
+            together4 <= 1'b0;
         end
 
             
@@ -188,19 +189,19 @@ module add_notes(input logic [7:0] note1, note2, note3,
         if (notescount == 2'b01) // if only one note being played
             notes = intermed;
         else if (notescount == 2'b10) // if 2 notes being played
-            if (together1 == 1'b1)
+//            if (together1 == 1'b1)
                 notes = intermed>>1;
-            else
-                notes = intermed;  // if the second note was played after the first note finished
+//            else
+//                notes = note2;  // if the second note was played after the first note finished, play only note 2
         else if (notescount == 2'b11)
             if (together3 == 1'b1) // if the third note was played before the first two notes finished
                 notes = sft2+sft4+sft6+sft8; //if 3 notes being played, divide by 3.011 = ~3
-//            else if(together4 == 1'b1) // if the third note was played before the second note finished
-//                notes = sft2+sft4+sft6+sft8; //if 3 notes being played, divide by 3.011 = ~3
-            else if (together2 == 1'b1) // if 2 notes were played after the first note finished
-                notes = intermed>>1;
+            else if(together4 == 1'b1) // if the third note was played before the second note finished
+                notes = sft2+sft4+sft6+sft8; //if 3 notes being played, divide by 3.011 = ~3
+//            else if (together2 == 1'b1) // if 2 notes were played after the first note finished
+//                notes = intermed2>>1;
             else // if the third note was played after the first and second note finished
-                notes = intermed;
+                notes = note3; // if only the third note is played only play note 3
         else
             notes = '0; // no note being played
         end
