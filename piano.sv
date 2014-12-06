@@ -14,19 +14,19 @@ module piano(input  logic       sck, sdi, clk,
     logic [7:0] wave;
     logic [7:0] atten1, atten2, atten3;
     logic [1:0] notescount;
-    logic done1, done2, done3;
+    logic start1, start2, start3, done1, done2, done3;
 
     spi_slave_receive_only spi(sck, sdi, q);
     process_spi proc(sck, q, note1, note2, note3, notescount);
     //assign atten1 = note1;
     //assign atten2 = note2;
     //assign atten3 = note3;
-    attenuation first(clk, note1, atten1, done1);
-    attenuation second(clk, note2, atten2, done2);
-    attenuation third(clk, note3, atten3, done3);
-     add_notes add(atten1, atten2, atten3, done1, done2, done3, notescount, wave);
+    attenuation first(clk, note1, atten1, start1, done1);
+    attenuation second(clk, note2, atten2, start2, done2);
+    attenuation third(clk, note3, atten3, start3, done3);
+     add_notes add(atten1, atten2, atten3, start1, start2, start3, done1, done2, done3, notescount, wave);
     //assign wave = note1;
-     assign led = atten1;
+     assign led = start1;
     dacProcess dac(clk, wave, data, dclk, load, ldac);
      
     
@@ -148,7 +148,7 @@ endmodule
 
 // adds the three notes together (if there are three) and makes sure the amplitude doesn't change
 module add_notes(input logic [7:0] note1, note2, note3,
-                 input logic done1, done2, done3,
+                 input logic start1, start2, start3, done1, done2, done3,
                  input logic [1:0] notescount,
                  output logic [7:0] notes);
     
@@ -164,7 +164,7 @@ module add_notes(input logic [7:0] note1, note2, note3,
     always_comb 
         if (notescountmod == 2'b01) // if only one note being played
             notes = intermed;
-        else if (notescountmod == 2'b10) // if 2 notes being played
+        else if (notescountmod == 2'b10 & ) // if 2 notes being played
             notes = intermed>>1;
         else if (notescountmod == 2'b11)
             notes = sft2+sft4+sft6+sft8; //if 3 notes being played, divide by 3.011 = ~3
@@ -178,7 +178,7 @@ endmodule
 module attenuation(input  logic       clk,
                    input  logic [7:0] wave,
                    output logic [7:0] attenuated, 
-                   output logic doneattenuating);
+                   output logic startattenuating, doneattenuating);
 
     // gets to max volume after 0.5 s
     // stays at max for 0.5 s
@@ -193,16 +193,19 @@ module attenuation(input  logic       clk,
         if(wave == 8'b0) // if no wave, counter hasn't started
         begin
             cnt <= 32'b0;
+            startattenuating <= 1'b0;
             doneattenuating <= 1'b0;
         end
         else if (cnt < 32'd120000000) // hasn't reached 3 sec? increment
         begin
             cnt <= cnt + 1'b1;
+            startattenuating <= 1'b1;
             doneattenuating <= 1'b0;
         end
         else
         begin
             cnt <= 32'd120000000; // reached 3 sec, so stop counting and set counter
+            startattenuating <= 1'b0;
             doneattenuating <= 1'b1;
         end
         
