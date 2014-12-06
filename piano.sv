@@ -193,10 +193,10 @@ module add_notes(input logic [7:0] note1, note2, note3,
                 notes = sft2+sft4+sft6+sft8; //if 3 notes being played, divide by 3.011 = ~3
             else if (together2 == 1'b1) // if the third note was played after the first and second note finished
                 notes = intermed>>1;
-            else if (together3 == 1'b0)
+            else
                 notes = intermed;
-            else // no note being played
-            notes = '0;
+        else
+            notes = '0; // no note being played
         end
 
 endmodule
