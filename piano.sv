@@ -175,7 +175,7 @@ module add_notes(input logic [7:0] note1, note2, note3,
             together3 <= 1'b1;
         else 
             together3 <= 1'b0;
-        if (start3 > (done1 & ~done2))
+        if (start3 == done1 & start3 == ~done2))
             together4 <= 1'b1;
         else 
             together4 <= 1'b0;
