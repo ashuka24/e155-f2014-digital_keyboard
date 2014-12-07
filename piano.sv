@@ -18,15 +18,11 @@ module piano(input  logic       sck, sdi, clk,
 
     spi_slave_receive_only spi(sck, sdi, q);
     process_spi proc(sck, q, note1, note2, note3, notescount);
-    //assign atten1 = note1;
-    //assign atten2 = note2;
-    //assign atten3 = note3;
     attenuation first(clk, note1, atten1, start1, done1);
     attenuation second(clk, note2, atten2, start2, done2);
     attenuation third(clk, note3, atten3, start3, done3);
     add_notes add(atten1, atten2, atten3, clk, start1, start2, start3, done1, done2, done3, notescount, wave);
-    //assign wave = note1;
-    assign led = {start1, done1, start2, done2, start3, done3};
+    assign led = {2'b0, start1, done1, start2, done2, start3, done3};
     dacProcess dac(clk, wave, data, dclk, load, ldac);
      
     
@@ -43,10 +39,6 @@ module dacProcess(input  logic clk,
     
     always_ff @(posedge clk)
         begin
-        /*if(cnt == 16'b0)
-            begin
-            wavekeep<=wave;
-            end*/
         if(cnt < 16'd160)
             begin
                 wavekeep<=wave;
@@ -152,16 +144,34 @@ module add_notes(input logic [7:0] note1, note2, note3,
                  input logic [1:0] notescount,
                  output logic [7:0] notes);
     
-    logic [9:0] intermed, intermed2, sft2, sft4, sft6, sft8;
-    logic [1:0] notescountmod, together1, together2, together3, together4;
-    assign notescountmod = notescount;// - done1 - done2 - done3; // if the notes being played is dependent on if a previous note has stopped playing
-    assign intermed = (note1 + note2 + note3);
-	 assign intermed2 = (note2 + note3);
-    assign sft2 = intermed>>2;
-    assign sft4 = intermed>>4;
-    assign sft6 = intermed>>6;
-    assign sft8 = intermed>>8;
+    logic [9:0] added123, added23, sft2, sft4, sft6, sft8, sftadded;
+    //logic [1:0] notescountmod, together1, together2, together3, together4;
+    //assign notescountmod = notescount;// - done1 - done2 - done3; // if the notes being played is dependent on if a previous note has stopped playing
+    assign added123 = (note1 + note2 + note3);
+	assign added23 = (note2 + note3);
+    assign sft2 = added123>>2;
+    assign sft4 = added123>>4;
+    assign sft6 = added123>>6;
+    assign sft8 = added123>>8;
+	 
+    assign sftadded = sft2+sft4+sft6+sft8;
      
+     //always_ff @(posedge clk)
+	  always_comb
+		  casez({start1, start2, start3, done1, done2, done3})
+        6'b000_??? : notes = 7'd0;
+        6'b100_000 : notes = note1;
+        6'b100_100 : notes = 7'd0;
+        6'b110_000 : notes = added123>>1; //(1+2)/2 b/c note3 is zero
+        6'b110_100 : notes = note2>>1;
+        6'b110_110 : notes = 7'd0;
+        6'b111_000 : notes = sftadded[7:0];
+        6'b111_100 : notes = added23/3;
+        6'b111_110 : notes = note3/3;
+        6'b111_111 : notes = 7'd0;
+        default : notes = 7'd0;
+        endcase
+  /*   
      always_ff @(posedge clk)
         begin
         if (start2 > done1) // if the second note starts before the first one ends
@@ -182,8 +192,8 @@ module add_notes(input logic [7:0] note1, note2, note3,
             together4 <= 1'b0;
         end
 
-            
-
+  */          
+/*
     always_comb 
         begin
         if (notescount == 2'b01) // if only one note being played
@@ -205,7 +215,7 @@ module add_notes(input logic [7:0] note1, note2, note3,
         else
             notes = '0; // no note being played
         end
-
+*/
 endmodule
 
 // Creates an envelope that attenuates the sound of the key hit
@@ -240,7 +250,7 @@ module attenuation(input  logic       clk,
         else
         begin
             cnt <= 32'd120000000; // reached 3 sec, so stop counting and set counter
-            startattenuating <= 1'b0;
+            startattenuating <= 1'b1;
             doneattenuating <= 1'b1;
         end
         
